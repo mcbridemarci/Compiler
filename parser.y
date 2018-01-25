@@ -144,6 +144,132 @@ expressionStmt:
               expression ';' 
               | ';'
               ;
+              
+selectionStmt:
+	if '(' simpleExpression ')' statement
+	| if '( simpleExpression )' statement else statement
+	;
+
+iterationStmt:
+	while '(' simpleExpression ')' statement
+	;
+
+returnStmt:
+	return ';'
+	| return expression ';'
+	;
+
+breakStmt:
+	break ';'
+
+
+expression:
+	mutable '=' expression
+	| mutable '+=' expression
+	| mutable '−=' expression
+	| mutable '∗=' expression
+	| mutable '/=' expression
+	| mutable '++'
+	| mutable '−−'
+	| simpleExpression
+	;
+
+simpleExpression:
+	simpleExpression or andExpression
+	| andExpression
+	;
+
+andExpression: 
+	andExpression and unaryRelExpression
+	| unaryRelExpression
+	;
+
+unaryRelExpression:
+	not unaryRelExpression
+	| relExpression
+	;
+
+relExpression:
+	sumExpression relop sumExpression
+	| sumExpression;
+
+relop: '<='
+	| '<'
+	| '>'
+	| '>='
+	| '=='
+	| '!='
+	;
+
+sumExpression:
+	sumExpression sumop term
+	| term
+	;
+
+sumop:
+	'+'
+	| '−'
+	;
+
+term:
+	term mulop unaryExpression
+	| unaryExpression
+	;
+
+mulop:
+	∗
+	| /
+	| %
+	;
+
+unaryExpression:
+	unaryop unaryExpression
+	| factor
+	;
+
+unaryop:
+	−
+	| ∗
+	| ?
+	;
+
+factor:
+	immutable
+	| mutable
+	;
+
+mutable:
+	ID
+	| mutable '[' expression ']'
+	| mutable '.' ID
+	;
+
+immutable:
+	'(' expression ')'
+	| call
+	| constant
+	;
+
+call:
+	ID '(' args ')'
+	;
+
+args:
+	argList
+	| ''
+	;
+
+argList: 
+	argList ',' expression
+	| expression
+	;
+
+constant:
+	NUMCONST
+	| CHARCONST
+	| true
+	| false
+	;
 
 %%
 
