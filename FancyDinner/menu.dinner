@@ -1,0 +1,27 @@
+diNNeR 3.7
+
+type steak
+type bread
+type spoon
+type fork
+type plate
+type spaghetti
+
+specials
+
+99 102 0 5 steak !meat
+34 25 108 37 spaghetti !cheese !wheat
+54 1 1 10 steak !meat
+67 8 92 41 spaghetti !tomatoes
+9 3 4 1000 spoon !none
+67 34 51 2 plate !none
+0 0 0 1 bread !wheat
+10 01 10 01 fork !none
+
+chemicals
+c7 g34
+d15 h23 j96
+e43 l21 v34 a21
+i76
+
+end
