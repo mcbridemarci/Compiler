@@ -299,9 +299,9 @@ int main(int argc, char** argv) {
 
 void yyerror(const char* s) {
 
-	//An error has occurred
-	printf("I want to speak to the manager on line %d! - Parser error: %s\n",line_num, s);
-	//Might as well quit
-	exit(-1);
+	int i = 0;
+	yylval.sval = strdup(yytext);
+	for (i = 0; i < strlen(yylval.sval); i++)
+		printf("ERROR(%d): Invalid or misplaced input character: \"%c\"\n",line_num, yylval.sval[i]);
 	return;
 }
