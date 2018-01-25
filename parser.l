@@ -22,15 +22,9 @@ CHARCONST   '[a-zA-Z0-9]|null|newline '
  //rules section 
 [(\/\/)+ .* $]	; // Do nothing for comments
 [ \t \n]				; // Grab spaces,  tabs, & new lines and do nothing  
-digit           { printf("Found a digit: %s\n", yytext); }
-letter           { printf("Found a letter: %s\n", yytext); }
-letdig           { printf("Found a letdig: %s\n", yytext); }
+
 
 
 %%
  // user subroutine section 
  // No subroutine here because bison is taking care of it
-int main(int argc, char **argv)
-{
-	yylex();
-}
