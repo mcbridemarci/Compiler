@@ -9,12 +9,12 @@ extern int yylex();
 //Count the lines
 int line_num = 1;
 %}
-letter      [a-zA-Z]
-digit				[0-9]
+letter                  [a-zA-Z]
+digit			[0-9]
 letdig			(letter|digit)
-ID					(letter+letdig*)
+ID			(letter+letdig*)
 NUMCONST		digit+
-null				\0
+null			\0
 newline			\n
 CHARCONST		'[a-zA-Z0-9]|null|newline '
 
