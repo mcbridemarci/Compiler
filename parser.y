@@ -32,53 +32,118 @@ void yyerror(const char* s);
 
 %%
 
-dinner:
-	header template body_section footer {
-	printf("Done with the dinner menu!\n"); }
-	;
+program:
+       delcarationList
+       ;
 
-header:
-	DINNER FLOAT ENDLS {
-	printf("Reading a diNNeR menu version %f\n",$2); }
-	;
+declarationList:
+               declaratioList declaration 
+               | declaration
+               ;
 
-template:
-	typelines
-	;
+declaration:
+           varDeclaration
+           | funDeclaration
+           | recDeclaration
+           ;
 
-typelines:
-	typelines typeline
-	| typeline
-	;
+recDeclaration: 'record' ID '{' localDeclarations '}'
+              ;
 
-typeline:
-	TYPE STRING ENDLS {
-	printf("New defined dinner type: %s\n",$2); }
-	;
+varDeclaration:
+              typeSpecifier varDeclList 
+              ;
 
-body_section:
-	body_lines
-	;
+scopedVarDeclaration:
+                    scopedTypeSpecifier varDeclList 
+                    ;
 
-body_lines:
-	body_lines body_line
-	| body_line
-	;
+varDeclList:
+           varDeclList ',' varDeclInitialize 
+           | varDeclInitialize
+           ;
 
-body_line:
-	INT INT INT INT STRING ENDLS {
-	printf("New dinner: %d%d%d%d%s\n",$1,$2,$3,$4,$5); }
-	;
+varDeclInitialize:
+                 varDeclId 
+                 | varDeclId : simpleExpression
+                 ;
 
-footer:
-	END ENDLS
-	| END
-	;
+varDeclId:
+         ID 
+         | ID '[' NUMCONST  ']'
+         ;
 
-ENDLS:
-	ENDLS ENDL
-	| ENDL
-	;
+scopedTypeSpecifier:
+                   static typeSpecifier 
+                   | typeSpecifier
+                   ;
+
+typeSpecifier:
+             returnTypeSpecifier 
+             | RECTYPE
+             ;
+
+returnTypeSpecifier:
+                   int 
+                   | bool 
+                   | char
+                   ;
+
+funDeclaration:
+              typeSpecifier ID '(' params  ')' statement '[' ID '(' params ')' statement
+              ;
+
+params:
+      paramList |
+      ''
+      ;
+
+paramList:
+         paramList ';' paramTypeList 
+         | paramTypeList
+         ;
+
+paramTypeList:
+             typeSpecifier paramIdList
+             ;
+
+paramIdList:
+           paramIdList ',' paramId 
+           | paramId
+           ;
+
+paramId:
+       ID 
+       | ID '['  ']'
+       ;
+
+statement:
+         expressionStmt 
+         | compoundStmt 
+         | selectionStmt 
+         | iterationStmt 
+         | returnStmt
+         | breakStmt
+         ;
+
+compoundStmt:
+            '{' localDeclarations statementList '}'
+            ;
+
+localDeclarations:
+                 localDeclarations scopedVarDeclaration 
+                 | ''
+                 ;
+
+statementList:
+             statementList statement 
+             | ''
+             ;
+
+expressionStmt:
+              expression ';' 
+              | ';'
+              ;
 
 %%
 
