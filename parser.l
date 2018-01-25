@@ -24,6 +24,7 @@ CHARCONST   '[a-zA-Z0-9]|null|newline '
 [(\/\/)+ .* $]	; // Do nothing for comments
 [ \t \n]				; // Grab spaces,  tabs, & new lines and do nothing  
 {digit}+        { yylval.ival = strtol(yytext); return NUMCONST; }
+{ID}            { yylval.sval = strdup(yytext);; return ID; }
 
 
 
