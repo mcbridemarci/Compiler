@@ -1,12 +1,13 @@
 %{
 #include <stdio.h>
-#include <string.h>                                                                          
+#include <string.h>
+#include "scanType.h"                                                                          
 #include "parser.tab.h"
-#include "scanType.h"
 
 //Inform bison about flex things
 extern int yylex();
 extern int yyparse();
+extern char* yytext;
 extern FILE* yyin;
 extern int line_num;
 
@@ -16,57 +17,68 @@ void yyerror(const char* s);
 
 //Use a union to hold possible token data types
 %union {
-	Token t;
+	Token token;
 	int temp;
 }
 
 //Associate value tokens with union fields
 //%token <t> ID NUMBER CHARACTER BOOLEAN RECORD
-%token <temp> ENDL AND OR NOT EQ NOTEQ LESSEQ GRTEQ LESS GRT INC DEC ADDASS
-%token <temp> SUBASS MULTASS DIVASS SUB PLUS MULT DIV MOD ASS NUMCONST BREAK
-%token <temp> BOOLCONST CHARCONST RECTYPE
+%token <token> ENDL AND OR NOT EQ NOTEQ LESSEQ GRTEQ LESS GRT INC DEC ADDASS
+%token <token> SUBASS MULTASS DIVASS SUB PLUS MULT DIV MOD ASS NUMCONST BREAK
+%token <token> BOOLCONST CHARCONST RECTYPE STATIC BOOL RETURN WHILE IN INT IF
+%token <token> ELSE CHAR
+//%token <token> ID NUMBER CHARACTER BOOLEAN KEYWORD RECORD
 
-%type <temp> program tokens token
+%type <temp> program words word
 %start program
 %%
 
 program:
-      tokens
+      words
       ;
 
-tokens:
-      tokens token
-      | token
+words:
+      words word
+      | word
       ;
 
-token:
-     ENDL
-     | AND
-     | OR
-     | NOT
-     | EQ
-     | NOTEQ
-     | LESSEQ
-     | GRTEQ
-     | LESS
-     | GRT
-     | INC
-     | DEC
-     | ADDASS
-     | SUBASS
-     | MULTASS
-     | DIVASS
-     | PLUS
-     | SUB
-     | MULT
-     | DIV
-     | MOD
-     | ASS
-     | NUMCONST
-     | BREAK
-     | BOOLCONST
-     | CHARCONST
-     | RECTYPE
+word:
+     ENDL {;}
+     | AND {;}
+     | OR {;}
+     | NOT {;}
+     | EQ {;}
+     | NOTEQ {;}
+     | LESSEQ {;}
+     | GRTEQ {;}
+     | LESS {;}
+     | GRT {;}
+     | INC {;}
+     | DEC {;}
+     | ADDASS {;}
+     | SUBASS {;}
+     | MULTASS {;}
+     | DIVASS {;}
+     | PLUS {;}
+     | SUB {;}
+     | MULT {;}
+     | DIV {;}
+     | MOD {;}
+     | ASS {;}
+     | NUMCONST {;}
+     | BREAK {;}
+     | BOOLCONST {;}
+     | BOOL {;}
+     | CHARCONST {fprintf(stderr,"hello char\n");}
+     | RECTYPE {;}
+     | STATIC {;}
+     | RETURN {;}
+     | WHILE {;}
+     | IN {;}
+     | INT {;}
+     | ELSE {;}
+     | IF {;}
+     | CHAR {;}
      ;
 
 %%
@@ -96,10 +108,6 @@ int main(int argc, char** argv) {
 }
 
 void yyerror(const char* s) {
-
-	int i = 0;
-	yylval.sval = strdup(yytext);
-	for (i = 0; i < strlen(yylval.sval); i++)
-		printf("ERROR(%d): Invalid or misplaced input character: \"%c\"\n",line_num, yylval.sval[i]);
+    fprintf(stderr, "hello errors! --  %s\n", yytext);
 	return;
 }

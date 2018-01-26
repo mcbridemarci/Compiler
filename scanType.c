@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "scanType.h"
 #include "parser.tab.h"
 
@@ -26,13 +28,13 @@ Token* newCHARtoken(int line, char ltr, char* str) {
 		yyerror("Failure to allocate CHAR token\n");
 
 	//Set line number to code line count
-	t.line_num = line;
+	t->line_num = line;
 	//Set letter value to encountered char
-	t.c = ltr;
+	t->c = ltr;
 	//Duplicate user-supplied string
-	t.raw_str = str;
+	t->raw_str = str;
 	//Set token type to character token
-	t.type = CHARACTER;
+	t->type = CHARACTER;
 	//Return token
 	return t;
 }
@@ -52,13 +54,12 @@ Token* newIDtoken(int line, char* str) {
 		yyerror("Failure to allocate ID token\n");
 
 	//Set line number to code line count
-	t.line_num = line;
+	t->line_num = line;
 	//Set letter value to encountered char
-	t.c = NULL;
 	//Dupilicate user-supplied string
-	t.raw_str = str;
+	t->raw_str = str;
 	//Set token type to character token
-	t.type = ID;
+	t->type = ID;
 	//Return token
 	return t;
 
@@ -80,13 +81,12 @@ Token* newRECtoken(int line, char* str) {
 		yyerror("Failure to allocate REC token\n");
 
 	//Set line number to code line count
-	t.line_num = line;
+	t->line_num = line;
 	//Set letter value to encountered char
-	t.c = NULL;
 	//Duplicate user-supplied string
-	t.raw_str = str;
+	t->raw_str = str;
 	//Set token type to character token
-	t.type = RECORD;
+	t->type = RECORD;
 	//Return token
 	return t;
 
@@ -107,13 +107,12 @@ Token* newKEYtoken(int line, char* str) {
 		yyerror("Failure to allocate KEY token\n");
 
 	//Set line number to code line count
-	t.line_num = line;
+	t->line_num = line;
 	//Set letter value to encountered char
-	t.c = NULL;
 	//Duplicate user-supplied string
-	t.raw_str = str;
+	t->raw_str = str;
 	//Set token type to character token
-	t.type = KEYWORD;
+	t->type = KEYWORD;
 	//Return token
 	return t;
 }
@@ -134,14 +133,13 @@ Token* newNUMtoken(int line, char* str, int val) {
 		yyerror("Failure to allocate NUM token\n");
 
 	//Set line number to code line count
-	t.line_num = line;
+	t->line_num = line;
 	//Set letter value to encountered char
-	t.c = NULL;
 	//Duplicate user-supplied string
-	t.raw_str = str;
+	t->raw_str = str;
 	//Set token type to character token
-	t.type = NUMBER;
-	t.num = val;
+	t->type = NUMBER;
+	t->num = val;
 	//Return token
 	return t;
 }
@@ -164,14 +162,13 @@ Token* newBOOLtoken(int line, char* str, int val) {
 		yyerror("Failure to allocate BOOL token\n");
 
 	//Set line number to code line count
-	t.line_num = line;
+	t->line_num = line;
 	//Set letter value to encountered char
-	t.c = NULL;
 	//Duplicate user-supplied string
-	t.raw_str = str;
+	t->raw_str = str;
 	//Set token type to character token
-	t.type = BOOLEAN;
-	t.num = val;
+	t->type = BOOLEAN;
+	t->num = val;
 	//Return token
 	return t;
 }
