@@ -63,7 +63,7 @@ word:
      | DIV {printf("Line %d Token: /\n", $1.line_num);}
      | MOD {printf("Line %d Token: %\n", $1.line_num);}
      | ASS {printf("Line %d Token: =\n", $1.line_num);}
-     | NUMCONST {printf("Line %d Token: NUMCONST Value: %d Input: %s\n",
+     | NUMCONST {printf("Line %d Token: NUMCONST Value: %d  Input: %s\n",
                      $1.line_num,$1.num,$1.raw_str);}
      | BREAK {printf("Line %d Token: BREAK\n", $1.line_num);}
      | BOOL {printf("Line %d Token: BOOL\n", $1.line_num);}
@@ -79,10 +79,10 @@ word:
      | CHAR {printf("Line %d Token: CHAR\n", $1.line_num);}
      | ID {printf("Line %d Token: ID Value: %s\n", $1.line_num,$1.raw_str);}
      | CHARCONST {
-                    printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n",
+                    printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n",
                      $1.line_num,$1.c,$1.raw_str);
                   }
-     | BOOLCONST {printf("Line %d Token: BOOLCONST Value: %d Input: %s\n", $1.line_num,$1.num,$1.raw_str);}
+     | BOOLCONST {printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", $1.line_num,$1.num,$1.raw_str);}
      | SYMBOL {printf("Line %d Token: %s\n", $1.line_num,$1.raw_str);}
      ;
 

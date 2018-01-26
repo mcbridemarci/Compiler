@@ -30,8 +30,8 @@ whiteSpace      [ \t\r]+
 
 %%
  //rules section 
-comments     ; // Do nothing for comments @TODO what about new lines in comments 
-           ; // Grab spaces and tabs and do nothing  
+{comments}     ; // Do nothing for comments @TODO what about new lines in comments 
+{whiteSpace}           ; // Grab spaces and tabs and do nothing  
 '\\n'            { yylval.token=*newCHARtoken(line_num,'\n',yytext); return CHARCONST; }
 {newline}              { ++line_num; return ENDL; }
 '\\0'            { yylval.token=*newCHARtoken(line_num,'\0',yytext); return CHARCONST;}
@@ -87,7 +87,7 @@ record          {
                     }
 <recname>.             { 
                   BEGIN(INITIAL);
-                  printf("Error(%d): Invalid or misplaced input character: \"%s\"\n", line_num, yytext);
+                  printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", line_num, yytext);
                 }
 
 
@@ -105,7 +105,7 @@ record          {
 
 
 .             { 
-                  printf("Error(%d): Invalid or misplaced input character: \"%s\"\n", line_num, yytext);
+                  printf("ERROR(%d): Invalid or misplaced input character: \"%s\"\n", line_num, yytext);
                 }
 
 %%
