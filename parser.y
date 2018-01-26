@@ -25,7 +25,7 @@ void yyerror(const char* s);
 
 //Associate value tokens with union fields
 //%token <t> ID NUMBER CHARACTER BOOLEAN RECORD
-%token <token> ENDL AND OR NOT EQ NOTEQ LESSEQ GRTEQ LESS GRT INC DEC ADDASS SUBASS MULTASS DIVASS SUB PLUS MULT DIV MOD ASS NUMCONST BREAK BOOLCONST CHARCONST RECTYPE STATIC BOOL RETURN WHILE IN INT IF ELSE CHAR ID NUMBER CHARACTER BOOLEAN KEYWORD RECORD SYMBOL
+%token <token> ENDL AND OR NOT EQ NOTEQ LESSEQ GRTEQ LESS GRT INC DEC ADDASS SUBASS MULTASS DIVASS SUB PLUS MULT DIV MOD ASS NUMCONST BREAK BOOLCONST CHARCONST RECTYPE STATIC BOOL RETURN WHILE IN INT IF ELSE CHAR ID NUMBER CHARACTER BOOLEAN KEYWORD RECORD SYMBOL 
 
 %type <temp> program words word
 %start program
@@ -67,7 +67,8 @@ word:
                      $1.line_num,$1.num,$1.raw_str);}
      | BREAK {printf("Line %d Token: BREAK\n", $1.line_num);}
      | BOOL {printf("Line %d Token: BOOL\n", $1.line_num);}
-     | RECTYPE {printf("Line %d Token: RECTYPE\n", $1.line_num);}
+     | RECTYPE {printf("Line %d Token: ID Value: %s\n", $1.line_num,$1.raw_str);}
+     | RECORD {printf("Line %d Token: RECORD\n", $1.line_num);}
      | STATIC {printf("Line %d Token: STATIC\n", $1.line_num);}
      | RETURN {printf("Line %d Token: RETURN\n", $1.line_num);}
      | WHILE {printf("Line %d Token: WHILE\n", $1.line_num);}

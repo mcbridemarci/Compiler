@@ -23,14 +23,17 @@ NUMCONST        {digit}+
 null            \0
 newline         \n
 CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
+comments        (\/\/)+.*$
+whiteSpace      [ \t\r]+
+
 %x recname
 
 %%
  //rules section 
-(\/\/)+.*$	; // Do nothing for comments @TODO what about new lines in comments 
-[ \t\r]+           ; // Grab spaces and tabs and do nothing  
+comments     ; // Do nothing for comments @TODO what about new lines in comments 
+           ; // Grab spaces and tabs and do nothing  
 '\\n'            { yylval.token=*newCHARtoken(line_num,'\n',yytext); return CHARCONST; }
-\n              { ++line_num; return ENDL; }
+{newline}              { ++line_num; return ENDL; }
 '\\0'            { yylval.token=*newCHARtoken(line_num,'\0',yytext); return CHARCONST;}
 
 ['][a-zA-Z0-9"][']       { yylval.token=*newCHARtoken(line_num,yytext[1],strdup(yytext)); return CHARCONST;}
@@ -71,6 +74,23 @@ record          {
                 BEGIN(recname);
                 return RECORD;
                 }
+<recname>{comments}   ;
+<recname>{whiteSpace}   ;
+<recname>{newline}   { ++line_num; return ENDL; } 
+<recname>{ID}     { 
+                    yylval.token=*newRECtoken(line_num,yytext);
+                    if(!rType)
+                            rType=newRType();
+                    addRType(rType,yytext);
+                    BEGIN(INITIAL);
+                    return RECTYPE;
+                    }
+<recname>.             { 
+                  BEGIN(INITIAL);
+                  printf("Error(%d): Invalid or misplaced input character: \"%s\"\n", line_num, yytext);
+                }
+
+
 
 {digit}+        { 
                   yylval.token=*newNUMtoken(line_num,yytext,strtoll(yytext,NULL,10)); 
