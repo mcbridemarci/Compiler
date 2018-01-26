@@ -12,14 +12,14 @@
 * Boolean token
 * Keyword token
 */
-typedef enum {
-	ID = 0,
+/*typedef enum {
 	NUMBER = 1,
 	CHARACTER = 2,
 	RECORD = 3,
 	BOOLEAN = 4,
-	KEYWORD = 5
-} TokenClass;
+	KEYWORD = 5,
+    ID = 6
+} TokenClass;*/
 
 
 /*

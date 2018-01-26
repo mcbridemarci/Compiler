@@ -28,11 +28,12 @@ CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
 %%
  //rules section 
 (\/\/)+.*$	; // Do nothing for comments @TODO what about new lines in comments 
-[ \t]+           ; // Grab spaces and tabs and do nothing  
+[ \t\r]+           ; // Grab spaces and tabs and do nothing  
 '\n'            { yylval.token=*newCHARtoken(line_num,'\n',yytext); return CHARCONST; }
 \n              { ++line_num; return ENDL; }
 '\0'            { yylval.token=*newCHARtoken(line_num,'\0',yytext); return CHARCONST;}
 
+{CHARCONST}       { yylval.token=*newCHARtoken(line_num,yytext[0],strdup(yytext)); return CHARCONST;}
 
 and             { yylval.token=*newKEYtoken(line_num,yytext); return AND; }
 or              { yylval.token=*newKEYtoken(line_num,yytext); return OR; }
@@ -77,7 +78,7 @@ false           { yylval.token=*newBOOLtoken(line_num,yytext,0); return BOOLCONS
 
 
 
-.               { 
+.             { 
                   printf("Error(%d): Invalid or misplaced input character: \"%s\"\n", line_num, yytext);
                 }
 

@@ -1,4 +1,6 @@
 %{
+#define YYPARSER
+//#define YYERROR_VERBOSE 1
 #include <stdio.h>
 #include <string.h>
 #include "scanType.h"                                                                          
@@ -23,23 +25,19 @@ void yyerror(const char* s);
 
 //Associate value tokens with union fields
 //%token <t> ID NUMBER CHARACTER BOOLEAN RECORD
-%token <token> ENDL AND OR NOT EQ NOTEQ LESSEQ GRTEQ LESS GRT INC DEC ADDASS
-%token <token> SUBASS MULTASS DIVASS SUB PLUS MULT DIV MOD ASS NUMCONST BREAK
-%token <token> BOOLCONST CHARCONST RECTYPE STATIC BOOL RETURN WHILE IN INT IF
-%token <token> ELSE CHAR
-//%token <token> ID NUMBER CHARACTER BOOLEAN KEYWORD RECORD
+%token <token> ENDL AND OR NOT EQ NOTEQ LESSEQ GRTEQ LESS GRT INC DEC ADDASS SUBASS MULTASS DIVASS SUB PLUS MULT DIV MOD ASS NUMCONST BREAK BOOLCONST CHARCONST RECTYPE STATIC BOOL RETURN WHILE IN INT IF ELSE CHAR ID NUMBER CHARACTER BOOLEAN KEYWORD RECORD
 
 %type <temp> program words word
 %start program
 %%
 
 program:
-      words
+      words 
       ;
 
 words:
       words word
-      | word
+      | word 
       ;
 
 word:
@@ -67,9 +65,7 @@ word:
      | ASS {;}
      | NUMCONST {;}
      | BREAK {;}
-     | BOOLCONST {;}
      | BOOL {;}
-     | CHARCONST {fprintf(stderr,"hello char\n");}
      | RECTYPE {;}
      | STATIC {;}
      | RETURN {;}
@@ -79,6 +75,9 @@ word:
      | ELSE {;}
      | IF {;}
      | CHAR {;}
+     | ID {printf("Line %d Token: ID Value: %s\n", $1.line_num,$1.raw_str);}
+     | CHARCONST {"Line %d Token: CHARCONST Value: %c Input: '%s'\n", $1.line_num,$1.c,$1.raw_str;}
+     | BOOLCONST {;}
      ;
 
 %%
@@ -108,6 +107,6 @@ int main(int argc, char** argv) {
 }
 
 void yyerror(const char* s) {
-    fprintf(stderr, "hello errors! --  %s\n", yytext);
+    fprintf(stderr, "hello errors! --  %s\n", s);
 	return;
 }
