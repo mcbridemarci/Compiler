@@ -63,7 +63,7 @@ token:
      | MULT
      | DIV
      | MOD
-     | EQ
+     | ASS
      | NUMCONST
      | ID
      | BOOLCONST
