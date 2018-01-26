@@ -8,15 +8,23 @@
 extern int yylex();
 //Count the lines
 int line_num = 1;
+
+static RType* rType;
+
+void yyerror(const char *s);
+
 %}
+
+%x
+
 letter          [a-zA-Z]
 digit           [0-9]
-letdig          ({letter}|{digit})
-ID              ({letter}+{letdig}*)
+letdig          {letter}|{digit}
+ID              {letter}+{letdig}*
 NUMCONST        {digit}+
 null            \0
 newline         \n
-CHARCONST       '[a-zA-Z0-9]|{null}|{newline} '
+CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
 
 
 %%
@@ -34,26 +42,27 @@ not             { return NOT; }
 <               { return LESS; }
 >               { return GRT; }
 
-++              { return INC; }
+\+\+            { return INC; }
 --              { return DEC; }
 
-+=              { return ADDASS; }
+\+=             { return ADDASS; }
 -=              { return SUBASS; }
-*=              { return MULTASS; }
+\*=             { return MULTASS; }
 \/=             { return DIVASS; }
 
 
 \+              { yylval.sval = strdup(yytext; return PLUS; }
 -               { return SUB; }
-*               { return MULT; }
+\*              { return MULT; }
 \/              { return DIV; }
 %               { return MOD; }
-=               { return EQ; }
+=               { return ASS; }
+
 
 
 [(\/\/)+ .* $]	; // Do nothing for comments
-[ \t]           ; // Grab spaces and tabs and do nothing  
-{digit}+        { yylval.ival = strtol(yytext); return NUMCONST; }
+[ \t]+           ; // Grab spaces and tabs and do nothing  
+{digit}+        { yylval.ival = strtoll(yytext); return NUMCONST; }
 {ID}            { yylval.sval = strdup(yytext); return ID; }
 true            { yylval.bval = 1; return BOOLCONST; }
 false           { yylval.bval = 0; return BOOLCONST; }
