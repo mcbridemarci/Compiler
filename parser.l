@@ -15,8 +15,6 @@ void yyerror(const char *s);
 
 %}
 
-%x
-
 letter          [a-zA-Z]
 digit           [0-9]
 letdig          {letter}|{digit}
@@ -29,51 +27,56 @@ CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
 
 %%
  //rules section 
+(\/\/)+.*$	; // Do nothing for comments @TODO what about new lines in comments 
+[ \t]+           ; // Grab spaces and tabs and do nothing  
+'\n'            { yylval.token=*newCHARtoken(); return CHARCONST; }
 \n              { ++line_num; return ENDL; }
-[(\/\/)+ .* $]	; // Do nothing for comments @TODO what about new lines in comments 
-[ \t\n]+           ; // Grab spaces and tabs and do nothing  
+'\0'            { yylval.token=*newCHARtoken(); return CHARCONST;}
 
-and             { return AND; }
-or              { return OR; }
-not             { return NOT; }
+ 
 
-={2}            { return EQ; }
-!=              { return NOTEQ; }
-<=              { return LESSEQ; }
->=              { return GRTEQ; }
+and             { yylval.token=*newKEYtoken(); return AND; }
+or              { yylval.token=*newKEYtoken(); return OR; }
+not             { yylval.token=*newKEYtoken(); return NOT; }
 
-\+\+            { return INC; }
---              { return DEC; }
+"<="            { yylval.token=*newKEYtoken(); return LESSEQ; }
+">="            { yylval.token=*newKEYtoken(); return GRTEQ; }
+={2}            { yylval.token=*newKEYtoken(); return EQ; }
+!=              { yylval.token=*newKEYtoken(); return NOTEQ; }
 
-\+=             { return ADDASS; }
--=              { return SUBASS; }
-\*=             { return MULTASS; }
-\/=             { return DIVASS; }
+\+\+            { yylval.token=*newKEYtoken(); return INC; }
+--              { yylval.token=*newKEYtoken(); return DEC; }
 
-bool            { return BOOL }
-break           { return BREAK }
-char            { return CHAR }
-else            { return ELSE}
-if              { return IF }
-in              { return IN }
-int             { return INT }
-return          { return RETURN }
-while           { return WHILE }
+\+=             { yylval.token=*newKEYtoken(); return ADDASS; }
+-=              { yylval.token=*newKEYtoken(); return SUBASS; }
+\*=             { yylval.token=*newKEYtoken(); return MULTASS; }
+\/=             { yylval.token=*newKEYtoken(); return DIVASS; }
+
+bool            { yylval.token=*newKEYtoken(); return BOOL; }
+break           { yylval.token=*newKEYtoken(); return BREAK; }
+char            { yylval.token=*newKEYtoken(); return CHAR; }
+else            { yylval.token=*newKEYtoken(); return ELSE; }
+if              { yylval.token=*newKEYtoken(); return IF; }
+in              { yylval.token=*newKEYtoken(); return IN; }
+int             { yylval.token=*newKEYtoken(); return INT; }
+return          { yylval.token=*newKEYtoken(); return RETURN; }
+while           { yylval.token=*newKEYtoken(); return WHILE; }
+static          { yylval.token=*newKEYtoken(); return STATIC; }
+true            { yylval.token=*newBOOLtoken(,,1); return BOOLCONST; }
+false           { yylval.token=*newBOOLtoken(,,0); return BOOLCONST; }
 
 [\(\)\{\}:;=,]  { return yytext[0]; }
 [\*\/\+-<>\?]   { return yytext[0]; }
-[\]\[%]              { return yytext[0]; }
+[\]\[%]         { return yytext[0]; }
 
 {digit}+        { 
-                  yylval.ival = strtol(yytext); 
+                  yylval.token=*newNUMtoken(,,strtoll(yytext)); 
                   return NUMCONST; 
                 }
 
 {ID}            { yylval.sval = strdup(yytext); return ID; }
-true            { yylval.bval = 1; return BOOLCONST; }
-false           { yylval.bval = 0; return BOOLCONST; }
 
-{CHARCONST}       {yylval.sval = strdup(yytext); return CHARCONST; }
+{CHARCONST}       { yylval.token=*newCHARtoken(); return CHARCONST;}
 
 
 .               { 
@@ -83,15 +86,4 @@ false           { yylval.bval = 0; return BOOLCONST; }
 %%
  // user subroutine section 
  // No subroutine here because bison is taking care of it
-     main( argc, argv )
-         int argc;
-             char **argv;
-                     {
-                       ++argv, --argc;  /* skip over program name */
-                        if ( argc > 0 )
-                            yyin = fopen( argv[0], "r" );
-                        else
-                            yyin = stdin;                                                         
-                        yylex();
-                                                                                       }
 
