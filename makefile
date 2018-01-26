@@ -34,7 +34,7 @@ LIBS = -lfl
 BFLAGS = -v -t -d
 
 #Uncomment for flex debugging
-#FFLAGS = -d
+FFLAGS = -d
 
 
 
