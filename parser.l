@@ -30,6 +30,8 @@ CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
 %%
  //rules section 
 \n              { ++line_num; return ENDL; }
+[(\/\/)+ .* $]	; // Do nothing for comments @TODO what about new lines in comments 
+[ \t\n]+           ; // Grab spaces and tabs and do nothing  
 
 and             { return AND; }
 or              { return OR; }
@@ -39,8 +41,6 @@ not             { return NOT; }
 !=              { return NOTEQ; }
 <=              { return LESSEQ; }
 >=              { return GRTEQ; }
-<               { return LESS; }
->               { return GRT; }
 
 \+\+            { return INC; }
 --              { return DEC; }
@@ -50,38 +50,49 @@ not             { return NOT; }
 \*=             { return MULTASS; }
 \/=             { return DIVASS; }
 
+bool            { return BOOL }
+break           { return BREAK }
+char            { return CHAR }
+else            { return ELSE}
+if              { return IF }
+in              { return IN }
+int             { return INT }
+return          { return RETURN }
+while           { return WHILE }
 
-\+              { yylval.sval = strdup(yytext; return PLUS; }
--               { return SUB; }
-\*              { return MULT; }
-\/              { return DIV; }
-%               { return MOD; }
-=               { return ASS; }
+[\(\)\{\}:;=,]  { return yytext[0]; }
+[\*\/\+-<>\?]   { return yytext[0]; }
+[\]\[%]              { return yytext[0]; }
 
-
-
-[(\/\/)+ .* $]	; // Do nothing for comments @TODO what about new lines in comments 
-[ \t]+           ; // Grab spaces and tabs and do nothing  
 {digit}+        { 
-                  printf("Line %s Token: NUMCONST Value: % Input: %\n", line_num, strtoll(yytext), yytext);
                   yylval.ival = strtol(yytext); 
                   return NUMCONST; 
                 }
 
-{ID}            { 
-                  printf("Line %s Token: ID Value: % \n", line_num, yytext);
-                  yylval.sval = strdup(yytext); 
-                  return ID; 
-                  }
+{ID}            { yylval.sval = strdup(yytext); return ID; }
 true            { yylval.bval = 1; return BOOLCONST; }
 false           { yylval.bval = 0; return BOOLCONST; }
 
+{CHARCONST}       {yylval.sval = strdup(yytext); return CHARCONST; }
 
 
-
-.               { printf("Error");
-                    }
+.               { 
+                  printf("Error(%d): Invalid or misplaced input character: "%s"\n", yytext);
+                }
 
 %%
  // user subroutine section 
  // No subroutine here because bison is taking care of it
+     main( argc, argv )
+         int argc;
+             char **argv;
+                     {
+                               ++argv, --argc;  /* skip over program name */
+                                       if ( argc > 0 )
+                                                   yyin = fopen( argv[0], "r" );
+                                                           else
+                                                                       yyin = stdin;
+
+                                                                               yylex();
+                                                                                       }
+
