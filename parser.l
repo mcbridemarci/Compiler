@@ -60,20 +60,26 @@ not             { return NOT; }
 
 
 
-[(\/\/)+ .* $]	; // Do nothing for comments
-[ \t]           ; // Grab spaces and tabs and do nothing  
-{digit}+        { printf("Line %s Token: NUMCONST Value: % Input: %\n", line_num, strtol(yytext), yytext);
+[(\/\/)+ .* $]	; // Do nothing for comments @TODO what about new lines in comments 
+[ \t]+           ; // Grab spaces and tabs and do nothing  
+{digit}+        { 
+                  printf("Line %s Token: NUMCONST Value: % Input: %\n", line_num, strtoll(yytext), yytext);
                   yylval.ival = strtol(yytext); 
                   return NUMCONST; 
                 }
-{ID}            { yylval.sval = strdup(yytext); return ID; }
+
+{ID}            { 
+                  printf("Line %s Token: ID Value: % \n", line_num, yytext);
+                  yylval.sval = strdup(yytext); 
+                  return ID; 
+                  }
 true            { yylval.bval = 1; return BOOLCONST; }
 false           { yylval.bval = 0; return BOOLCONST; }
 
 
 
 
-.               { //final rule to catch everything else: error here 
+.               { printf("Error");
                     }
 
 %%
