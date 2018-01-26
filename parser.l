@@ -29,11 +29,13 @@ CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
  //rules section 
 (\/\/)+.*$	; // Do nothing for comments @TODO what about new lines in comments 
 [ \t\r]+           ; // Grab spaces and tabs and do nothing  
-'\n'            { yylval.token=*newCHARtoken(line_num,'\n',yytext); return CHARCONST; }
+'\\n'            { yylval.token=*newCHARtoken(line_num,'\n',yytext); return CHARCONST; }
 \n              { ++line_num; return ENDL; }
-'\0'            { yylval.token=*newCHARtoken(line_num,'\0',yytext); return CHARCONST;}
+'\\0'            { yylval.token=*newCHARtoken(line_num,'\0',yytext); return CHARCONST;}
 
-{CHARCONST}       { yylval.token=*newCHARtoken(line_num,yytext[0],strdup(yytext)); return CHARCONST;}
+['][a-zA-Z0-9"][']       { yylval.token=*newCHARtoken(line_num,yytext[1],strdup(yytext)); return CHARCONST;}
+['](\\['\\"])[']       { yylval.token=*newCHARtoken(line_num,yytext[2],strdup(yytext)); return CHARCONST;}
+
 
 and             { yylval.token=*newKEYtoken(line_num,yytext); return AND; }
 or              { yylval.token=*newKEYtoken(line_num,yytext); return OR; }
@@ -65,14 +67,14 @@ static          { yylval.token=*newKEYtoken(line_num,yytext); return STATIC; }
 true            { yylval.token=*newBOOLtoken(line_num,yytext,1); return BOOLCONST; }
 false           { yylval.token=*newBOOLtoken(line_num,yytext,0); return BOOLCONST; }
 
-[\(\)\{\}:;=,]  { return yytext[0]; }
-[\*\/\+-<>\?]   { return yytext[0]; }
-[\]\[%]         { return yytext[0]; }
 
 {digit}+        { 
                   yylval.token=*newNUMtoken(line_num,yytext,strtoll(yytext,NULL,10)); 
                   return NUMCONST; 
                 }
+[\(\)\{\}:;=,]  { yylval.token=*newKEYtoken(line_num,yytext); return SYMBOL;}
+[\*\/\+-<>\?]   { yylval.token=*newKEYtoken(line_num,yytext); return SYMBOL;}
+[\]\[%]         {yylval.token=*newKEYtoken(line_num,yytext); return SYMBOL;}
 
 {ID}            { yylval.token=*newIDtoken(line_num,strdup(yytext)); return ID; }
 
