@@ -53,7 +53,10 @@ not             { return NOT; }
 
 [(\/\/)+ .* $]	; // Do nothing for comments
 [ \t]           ; // Grab spaces and tabs and do nothing  
-{digit}+        { yylval.ival = strtol(yytext); return NUMCONST; }
+{digit}+        { printf("Line %s Token: NUMCONST Value: % Input: %\n", line_num, strtol(yytext), yytext);
+                  yylval.ival = strtol(yytext); 
+                  return NUMCONST; 
+                }
 {ID}            { yylval.sval = strdup(yytext); return ID; }
 true            { yylval.bval = 1; return BOOLCONST; }
 false           { yylval.bval = 0; return BOOLCONST; }
