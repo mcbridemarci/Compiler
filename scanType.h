@@ -13,12 +13,12 @@
 * Keyword token
 */
 typedef enum {
-	ID,
-	NUMBER,
-	CHARACTER,
-	RECORD,
-	BOOLEAN,
-	KEYWORD
+	ID = 0,
+	NUMBER = 1,
+	CHARACTER = 2,
+	RECORD = 3,
+	BOOLEAN = 4,
+	KEYWORD = 5
 } TokenClass;
 
 
