@@ -29,58 +29,58 @@ CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
  //rules section 
 (\/\/)+.*$	; // Do nothing for comments @TODO what about new lines in comments 
 [ \t]+           ; // Grab spaces and tabs and do nothing  
-'\n'            { yylval.token=*newCHARtoken(); return CHARCONST; }
+'\n'            { yylval.token=*newCHARtoken(line_num,'\n',yytext); return CHARCONST; }
 \n              { ++line_num; return ENDL; }
-'\0'            { yylval.token=*newCHARtoken(); return CHARCONST;}
+'\0'            { yylval.token=*newCHARtoken(line_num,'\0',yytext); return CHARCONST;}
 
  
 
-and             { yylval.token=*newKEYtoken(); return AND; }
-or              { yylval.token=*newKEYtoken(); return OR; }
-not             { yylval.token=*newKEYtoken(); return NOT; }
+and             { yylval.token=*newKEYtoken(line_num,yytext); return AND; }
+or              { yylval.token=*newKEYtoken(line_num,yytext); return OR; }
+not             { yylval.token=*newKEYtoken(line_num,yytext); return NOT; }
 
-"<="            { yylval.token=*newKEYtoken(); return LESSEQ; }
-">="            { yylval.token=*newKEYtoken(); return GRTEQ; }
-={2}            { yylval.token=*newKEYtoken(); return EQ; }
-!=              { yylval.token=*newKEYtoken(); return NOTEQ; }
+"<="            { yylval.token=*newKEYtoken(line_num,yytext); return LESSEQ; }
+">="            { yylval.token=*newKEYtoken(line_num,yytext); return GRTEQ; }
+={2}            { yylval.token=*newKEYtoken(line_num,yytext); return EQ; }
+!=              { yylval.token=*newKEYtoken(line_num,yytext); return NOTEQ; }
 
-\+\+            { yylval.token=*newKEYtoken(); return INC; }
---              { yylval.token=*newKEYtoken(); return DEC; }
+\+\+            { yylval.token=*newKEYtoken(line_num,yytext); return INC; }
+--              { yylval.token=*newKEYtoken(line_num,yytext); return DEC; }
 
-\+=             { yylval.token=*newKEYtoken(); return ADDASS; }
--=              { yylval.token=*newKEYtoken(); return SUBASS; }
-\*=             { yylval.token=*newKEYtoken(); return MULTASS; }
-\/=             { yylval.token=*newKEYtoken(); return DIVASS; }
+\+=             { yylval.token=*newKEYtoken(line_num,yytext); return ADDASS; }
+-=              { yylval.token=*newKEYtoken(line_num,yytext); return SUBASS; }
+\*=             { yylval.token=*newKEYtoken(line_num,yytext); return MULTASS; }
+\/=             { yylval.token=*newKEYtoken(line_num,yytext); return DIVASS; }
 
-bool            { yylval.token=*newKEYtoken(); return BOOL; }
-break           { yylval.token=*newKEYtoken(); return BREAK; }
-char            { yylval.token=*newKEYtoken(); return CHAR; }
-else            { yylval.token=*newKEYtoken(); return ELSE; }
-if              { yylval.token=*newKEYtoken(); return IF; }
-in              { yylval.token=*newKEYtoken(); return IN; }
-int             { yylval.token=*newKEYtoken(); return INT; }
-return          { yylval.token=*newKEYtoken(); return RETURN; }
-while           { yylval.token=*newKEYtoken(); return WHILE; }
-static          { yylval.token=*newKEYtoken(); return STATIC; }
-true            { yylval.token=*newBOOLtoken(,,1); return BOOLCONST; }
-false           { yylval.token=*newBOOLtoken(,,0); return BOOLCONST; }
+bool            { yylval.token=*newKEYtoken(line_num,yytext); return BOOL; }
+break           { yylval.token=*newKEYtoken(line_num,yytext); return BREAK; }
+char            { yylval.token=*newKEYtoken(line_num,yytext); return CHAR; }
+else            { yylval.token=*newKEYtoken(line_num,yytext); return ELSE; }
+if              { yylval.token=*newKEYtoken(line_num,yytext); return IF; }
+in              { yylval.token=*newKEYtoken(line_num,yytext); return IN; }
+int             { yylval.token=*newKEYtoken(line_num,yytext); return INT; }
+return          { yylval.token=*newKEYtoken(line_num,yytext); return RETURN; }
+while           { yylval.token=*newKEYtoken(line_num,yytext); return WHILE; }
+static          { yylval.token=*newKEYtoken(line_num,yytext); return STATIC; }
+true            { yylval.token=*newBOOLtoken(line_num,yytext,1); return BOOLCONST; }
+false           { yylval.token=*newBOOLtoken(line_num,yytext,0); return BOOLCONST; }
 
 [\(\)\{\}:;=,]  { return yytext[0]; }
 [\*\/\+-<>\?]   { return yytext[0]; }
 [\]\[%]         { return yytext[0]; }
 
 {digit}+        { 
-                  yylval.token=*newNUMtoken(,,strtoll(yytext)); 
+                  yylval.token=*newNUMtoken(line_num,yytext(),strtoll(yytext)); 
                   return NUMCONST; 
                 }
 
-{ID}            { yylval.sval = strdup(yytext); return ID; }
+{ID}            { yylval.token=*newIDtoken(line_num,strdup(yytext)); return ID; }
 
-{CHARCONST}       { yylval.token=*newCHARtoken(); return CHARCONST;}
+{CHARCONST}       { yylval.token=*newCHARtoken(line_num,yytext[0],strdup(yytext)); return CHARCONST;}
 
 
 .               { 
-                  printf("Error(%d): Invalid or misplaced input character: "%s"\n", yytext);
+                  printf("Error(%d): Invalid or misplaced input character: \"%s\"\n", line_num, yytext);
                 }
 
 %%
