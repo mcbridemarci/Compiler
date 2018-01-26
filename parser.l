@@ -23,7 +23,7 @@ NUMCONST        {digit}+
 null            \0
 newline         \n
 CHARCONST       '[a-zA-Z0-9]|{null}|{newline}'
-
+%x recname
 
 %%
  //rules section 
@@ -66,7 +66,11 @@ while           { yylval.token=*newKEYtoken(line_num,yytext); return WHILE; }
 static          { yylval.token=*newKEYtoken(line_num,yytext); return STATIC; }
 true            { yylval.token=*newBOOLtoken(line_num,yytext,1); return BOOLCONST; }
 false           { yylval.token=*newBOOLtoken(line_num,yytext,0); return BOOLCONST; }
-
+record          {
+                yylval.token = *newKEYtoken(line_num,yytext);
+                BEGIN(recname);
+                return RECORD;
+                }
 
 {digit}+        { 
                   yylval.token=*newNUMtoken(line_num,yytext,strtoll(yytext,NULL,10)); 

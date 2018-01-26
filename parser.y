@@ -54,8 +54,8 @@ word:
      | INC {printf("Line %d Token: INC\n", $1.line_num);}
      | DEC {printf("Line %d Token: DEC\n", $1.line_num);}
      | ADDASS {printf("Line %d Token: ADDASS\n", $1.line_num);}
-     | SUBASS {printf("Line %d Token: AND\n", $1.line_num);}
-     | MULTASS {printf("Line %d Token: MULTASS\n", $1.line_num);}
+     | SUBASS {printf("Line %d Token: SUBASS\n", $1.line_num);}
+     | MULTASS {printf("Line %d Token: MULASS\n", $1.line_num);}
      | DIVASS {printf("Line %d Token: DIVASS\n", $1.line_num);}
      | PLUS {printf("Line %d Token: +\n", $1.line_num);}
      | SUB {printf("Line %d Token: -\n", $1.line_num);}
@@ -63,7 +63,7 @@ word:
      | DIV {printf("Line %d Token: /\n", $1.line_num);}
      | MOD {printf("Line %d Token: %\n", $1.line_num);}
      | ASS {printf("Line %d Token: =\n", $1.line_num);}
-     | NUMCONST {printf("Line %d Token: NUMCONST Value: %ld Input: %s\n",
+     | NUMCONST {printf("Line %d Token: NUMCONST Value: %d Input: %s\n",
                      $1.line_num,$1.num,$1.raw_str);}
      | BREAK {printf("Line %d Token: BREAK\n", $1.line_num);}
      | BOOL {printf("Line %d Token: BOOL\n", $1.line_num);}
@@ -81,7 +81,7 @@ word:
                     printf("Line %d Token: CHARCONST Value: '%c' Input: %s\n",
                      $1.line_num,$1.c,$1.raw_str);
                   }
-     | BOOLCONST {;}
+     | BOOLCONST {printf("Line %d Token: BOOLCONST Value: %d Input: %s\n", $1.line_num,$1.num,$1.raw_str);}
      | SYMBOL {printf("Line %d Token: %s\n", $1.line_num,$1.raw_str);}
      ;
 
