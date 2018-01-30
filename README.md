@@ -12,6 +12,7 @@ have in the examples I give below. Almost the same format is not good enough.
 ## Files
 * parser.l - contains the flex code
 * parser.y - contains the bison code
+* scanType.c - contains scanner functions to create new tokens
 * scanType.h - contains the declaration of either a struct or class that is used to pass your token information back from the scanner.
 * makefile - execute to build your c-.
 
