@@ -1,118 +1,194 @@
 %{
+
+/**
+ *
+ * @date Spring 2018
+ * @author Omar Soliman
+ * @title Bison Parser
+ *    _____
+ *   /\   /\
+ *  /  \ /  \
+ * |    xmst |
+ *  \  / \  /
+ *   \/___\/
+ *
+ **/
+
 #define YYPARSER
-//#define YYERROR_VERBOSE 1
-#include <stdio.h>
-#include <string.h>
-#include "scanType.h"                                                                          
-#include "parser.tab.h"
+
+//System library import
+#include<stdio.h>
+GETOPT library
+#include<string.h>
+
+//User defined structures
+#include "scanType.h"
+#include "printTree.h"
+
+//Enable detailed error messages
+#define YYERROR_VERBOSE 1
 
 //Inform bison about flex things
 extern int yylex();
 extern int yyparse();
-extern char* yytext;
 extern FILE* yyin;
 extern int line_num;
 
-//Error function
+//Main AST to parse into
+static TreeNode* syntaxTree;
+
+//Reference parser error function
 void yyerror(const char* s);
+
 %}
 
-//Use a union to hold possible token data types
+//Use a union to hold possible grammar data types
 %union {
 	Token token;
-	int temp;
+	struct TreeNode* treeNode;
 }
 
-//Associate value tokens with union fields
-//%token <t> ID NUMBER CHARACTER BOOLEAN RECORD
-%token <token> ENDL AND OR NOT EQ NOTEQ LESSEQ GRTEQ LESS GRT INC DEC ADDASS SUBASS MULTASS DIVASS SUB PLUS MULT DIV MOD ASS NUMCONST BREAK BOOLCONST CHARCONST RECTYPE STATIC BOOL RETURN WHILE IN INT IF ELSE CHAR ID NUMBER CHARACTER BOOLEAN KEYWORD RECORD SYMBOL 
+//Associate token types with union fields
+%token <token> ID NUMCONST CHARCONST RECTYPE BOOLCONST RECORD
+%token <token> STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK OR AND NOT
+%token <token> EQ NOTEQ MULASS INC ADDASS DEC SUBASS DIVASS LESSEQ GRTEQ
+%token <token> ASTERISK RANDOM DASH FSLASH LPAREN RPAREN PLUS COMMA
+%token <token> LSQB RSQB COLON SCOLON LTHAN ASSIGN GTHAN
+%token <token> MOD PERIOD LCB RCB
 
-%type <temp> program words word
+//Types for nonterminals
+%type <treeNode> program declarationList ...
+
+//Grammar starting point
 %start program
+
 %%
 
 program:
-      words 
-      ;
+	declarationList { syntaxTree = $1; }
+	;
 
-words:
-      words word
-      | word 
-      ;
+declarationList:
+	declarationList declaration
+	{
 
-word:
-     ENDL {;}
-     | AND {printf("Line %d Token: AND\n", $1.line_num);}
-     | OR {printf("Line %d Token: OR\n", $1.line_num);}
-     | NOT {printf("Line %d Token: NOT\n", $1.line_num);}
-     | EQ {printf("Line %d Token: EQ\n", $1.line_num);}
-     | NOTEQ {printf("Line %d Token: NOTEQ\n", $1.line_num);}
-     | LESSEQ {printf("Line %d Token: LESSEQ\n", $1.line_num);}
-     | GRTEQ {printf("Line %d Token: GRTEQ\n", $1.line_num);}
-     | LESS {printf("Line %d Token: <\n", $1.line_num);}
-     | GRT {printf("Line %d Token: >\n", $1.line_num);}
-     | INC {printf("Line %d Token: INC\n", $1.line_num);}
-     | DEC {printf("Line %d Token: DEC\n", $1.line_num);}
-     | ADDASS {printf("Line %d Token: ADDASS\n", $1.line_num);}
-     | SUBASS {printf("Line %d Token: SUBASS\n", $1.line_num);}
-     | MULTASS {printf("Line %d Token: MULASS\n", $1.line_num);}
-     | DIVASS {printf("Line %d Token: DIVASS\n", $1.line_num);}
-     | PLUS {printf("Line %d Token: +\n", $1.line_num);}
-     | SUB {printf("Line %d Token: -\n", $1.line_num);}
-     | MULT {printf("Line %d Token: *\n", $1.line_num);}
-     | DIV {printf("Line %d Token: /\n", $1.line_num);}
-     | MOD {printf("Line %d Token: %\n", $1.line_num);}
-     | ASS {printf("Line %d Token: =\n", $1.line_num);}
-     | NUMCONST {printf("Line %d Token: NUMCONST Value: %d  Input: %s\n",
-                     $1.line_num,$1.num,$1.raw_str);}
-     | BREAK {printf("Line %d Token: BREAK\n", $1.line_num);}
-     | BOOL {printf("Line %d Token: BOOL\n", $1.line_num);}
-     | RECTYPE {printf("Line %d Token: ID Value: %s\n", $1.line_num,$1.raw_str);}
-     | RECORD {printf("Line %d Token: RECORD\n", $1.line_num);}
-     | STATIC {printf("Line %d Token: STATIC\n", $1.line_num);}
-     | RETURN {printf("Line %d Token: RETURN\n", $1.line_num);}
-     | WHILE {printf("Line %d Token: WHILE\n", $1.line_num);}
-     | IN {printf("Line %d Token: IN\n", $1.line_num);}
-     | INT {printf("Line %d Token: INT\n", $1.line_num);}
-     | ELSE {printf("Line %d Token: ELSE\n", $1.line_num);}
-     | IF {printf("Line %d Token: IF\n", $1.line_num);}
-     | CHAR {printf("Line %d Token: CHAR\n", $1.line_num);}
-     | ID {printf("Line %d Token: ID Value: %s\n", $1.line_num,$1.raw_str);}
-     | CHARCONST {
-                    printf("Line %d Token: CHARCONST Value: '%c'  Input: %s\n",
-                     $1.line_num,$1.c,$1.raw_str);
-                  }
-     | BOOLCONST {printf("Line %d Token: BOOLCONST Value: %d  Input: %s\n", $1.line_num,$1.num,$1.raw_str);}
-     | SYMBOL {printf("Line %d Token: %s\n", $1.line_num,$1.raw_str);}
-     ;
+ //Good idea code for left recursion to link together lists
+ //No malloc here because the list members should already exist, yeah?
+		TreeNode* t = $1;
+
+		if(t != NULL)
+		{
+			while(t->sibling != NULL)
+				t = t->sibling;
+
+			t->sibling = $2;
+			$$ = $1;
+		}
+		else
+		{
+			$$ = $2;
+		}
+	}
+	| %empty { $$ = NULL; }
+	;
+
+declaration:
+//Just passing stuff up the stack
+	varDeclaration { $$ = $1; }
+	| funDeclaration { $$ = $1; }
+	| recDeclaration { $$ = $1; }
+	;
+
+constant:
+	NUMCONST
+	{
+//This is where/how list members come from/in
+		TreeNode* t = newExpNode(ConstK);
+
+		t->attr.value = $1.value;
+		t->expType = Integer;
+
+		$$ = t;
+	}
+	;
 
 %%
 
-int main(int argc, char** argv) {
+/*
+* MAIN FUNCTION
+*/
+main() {
 
-	//Open file handle to read input
-	FILE* myfile;
+	/* Command line option variables
+	 *
+	 * c - value of flag
+	 * long_options - array of word-sized options
+	 * option_index - location in arg list
+	 */
+	int c;
+	struct option long_options[] = {};
+	int option_index = 0;
 
-        if (argc > 1) {
-            myfile = fopen(argv[1], "r");
-	        if(!myfile) {
-                    printf("Excuse me, I can't read your c- file!\n");
-        		return(-1);
-	        }
-        } else {
-            myfile = stdin;
-        }
+	//Check for command line args
+	do {
+		/*
+		* The string "" arg should contain all acceptable options
+		*
+		*/
+		c = g*********g(, , "", , &);
+		switch(c)
+		{
+			//Long option present
+			case 0:
+				break;
+			//Debug parser
+			case  :
+				yydebug = ;
+				break;
+			//No more options
+			case -1:
+				break;
+			//Unknown option
+			default:
+				return(-1);
+				break;
+		}
+	}while(c != -1);
 
-	//Tell bison to read from file stream
-	yyin = myfile;
+	//File name has also been provided
+	if(optind < argc)
+	{
 
-	//Parse the input
-	do{
-		yyparse();
-	}while(!feof(yyin));
+	}
+	//No file name given
+	else
+	{
+
+	}
+
+	//Parse input until EOF
+	do
+	{
+
+	}
+	while(!feof(yyin));
+
+	printTree(stdout, syntaxTree);
+
+	//Close read-in file
+	fclose(yyin);
+
+	return(0);
 }
 
+/*
+* Parser error function
+*
+* s - String to include in error function
+*/
 void yyerror(const char* s) {
-    fprintf(stderr, "hello errors! --  %s\n", s);
+
+	fprintf(stdout, "ERROR(%d): %s\n",line_num, s);
+
 	return;
 }

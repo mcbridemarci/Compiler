@@ -1,25 +1,32 @@
 #ifndef _SCANTYPE_H_
 #define _SCANTYPE_H_
 
+/**
+ *
+ * @date Spring 2018
+ * @author Omar Soliman
+ * @title Scanner Definitions
+ *    _____
+ *   /\   /\
+ *  /  \ /  \
+ * |    xmst |
+ *  \  / \  /
+ *   \/___\/
+ *
+ **/
+
 
 /*
 * Main kind of token type
 *
-* ID token
-* Number token
-* Character token
-* Record token
-* Boolean token
-* Keyword token
+* idTkn - ID token
+* numTkn - Number token
+* charTkn - Character token
+* recTkn - Record token
+* boolTkn - Boolean token
+* keyTkn - Keyword token
 */
-/*typedef enum {
-	NUMBER = 1,
-	CHARACTER = 2,
-	RECORD = 3,
-	BOOLEAN = 4,
-	KEYWORD = 5,
-    ID = 6
-} TokenClass;*/
+typedef enum {idTkn, numTkn, charTkn, recTkn, boolTkn, keyTkn} TokenClass;
 
 
 /*
@@ -28,15 +35,20 @@
 typedef struct {
 
 	//Token type to differentiate tokens
-	int type;
+	TokenClass tokenType;
+
 	//Token location in code
-	int line_num;
+	int lineNumber;
+
 	//Token raw string from code
-	char *raw_str;
+	char* string;
+
 	//Token single character value
-	char c;
-	//Token numerical value of the str
-	int num; 
+	char letter;
+
+	//Token numerical value
+	int value;
+
 } Token;
 
 /*
@@ -103,13 +115,6 @@ Token* newNUMtoken(int line, char* str, int val);
 * val - Numerical value
 */
 Token* newBOOLtoken(int line, char* str, int val);
-
-/*
-* Convert string to upper case
-*
-* s - lowercase string
-*/
-void strupr(char* s);
 
 /*
 * Create rectype linked list

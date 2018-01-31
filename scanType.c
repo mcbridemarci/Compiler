@@ -1,12 +1,23 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
+/**
+ *
+ * @date Spring 2018
+ * @author Omar Soliman
+ * @title Scanner functions
+ *    _____
+ *   /\   /\
+ *  /  \ /  \
+ * |    xmst |
+ *  \  / \  /
+ *   \/___\/
+ *
+ **/
+
+//System library imports
+#include<stdlib.h>
+#include<string.h>
+
+//Token definition import
 #include "scanType.h"
-#include "parser.tab.h"
-
-//Header import
-
 
 //Reference parser error function
 void yyerror(const char* s);
@@ -28,13 +39,17 @@ Token* newCHARtoken(int line, char ltr, char* str) {
 		yyerror("Failure to allocate CHAR token\n");
 
 	//Set line number to code line count
-	t->line_num = line;
+	t->lineNumber = line;
+
 	//Set letter value to encountered char
-	t->c = ltr;
+	t->letter = ltr;
+
 	//Duplicate user-supplied string
-	t->raw_str = str;
+	t->string = strdup(str);
+
 	//Set token type to character token
-	t->type = CHARACTER;
+	t->tokenType = charTkn;
+
 	//Return token
 	return t;
 }
@@ -47,6 +62,7 @@ Token* newCHARtoken(int line, char ltr, char* str) {
 */
 Token* newIDtoken(int line, char* str) {
 
+	//Allocate memory for token
 	Token* t = malloc(sizeof(Token));
 
 	//Check for allocation success
@@ -54,15 +70,16 @@ Token* newIDtoken(int line, char* str) {
 		yyerror("Failure to allocate ID token\n");
 
 	//Set line number to code line count
-	t->line_num = line;
-	//Set letter value to encountered char
-	//Dupilicate user-supplied string
-	t->raw_str = str;
-	//Set token type to character token
-	t->type = ID;
+	t->lineNumber = line;
+
+	//Duplicate user-supplied string
+	t->string = strdup(str);
+
+	//Set token type to ID token
+	t->tokenType = idTkn;
+
 	//Return token
 	return t;
-
 }
 
 /*
@@ -73,7 +90,7 @@ Token* newIDtoken(int line, char* str) {
 */
 Token* newRECtoken(int line, char* str) {
 
-
+	//Allocate memory for token
 	Token* t = malloc(sizeof(Token));
 
 	//Check for allocation success
@@ -81,15 +98,16 @@ Token* newRECtoken(int line, char* str) {
 		yyerror("Failure to allocate REC token\n");
 
 	//Set line number to code line count
-	t->line_num = line;
-	//Set letter value to encountered char
+	t->lineNumber = line;
+
 	//Duplicate user-supplied string
-	t->raw_str = str;
-	//Set token type to character token
-	t->type = RECORD;
+	t->string = strdup(str);
+
+	//Set token type to record token
+	t->tokenType = recTkn;
+
 	//Return token
 	return t;
-
 }
 
 /*
@@ -100,6 +118,7 @@ Token* newRECtoken(int line, char* str) {
 */
 Token* newKEYtoken(int line, char* str) {
 
+	//Allocate memory for token
 	Token* t = malloc(sizeof(Token));
 
 	//Check for allocation success
@@ -107,12 +126,14 @@ Token* newKEYtoken(int line, char* str) {
 		yyerror("Failure to allocate KEY token\n");
 
 	//Set line number to code line count
-	t->line_num = line;
-	//Set letter value to encountered char
+	t->lineNumber = line;
+
 	//Duplicate user-supplied string
-	t->raw_str = str;
-	//Set token type to character token
-	t->type = KEYWORD;
+	t->string = strdup(str);
+
+	//Set token type to keyword token
+	t->tokenType = keyTkn;
+
 	//Return token
 	return t;
 }
@@ -126,6 +147,7 @@ Token* newKEYtoken(int line, char* str) {
 */
 Token* newNUMtoken(int line, char* str, int val) {
 
+	//Allocate memory for token
 	Token* t = malloc(sizeof(Token));
 
 	//Check for allocation success
@@ -133,13 +155,17 @@ Token* newNUMtoken(int line, char* str, int val) {
 		yyerror("Failure to allocate NUM token\n");
 
 	//Set line number to code line count
-	t->line_num = line;
-	//Set letter value to encountered char
+	t->lineNumber = line;
+
 	//Duplicate user-supplied string
-	t->raw_str = str;
-	//Set token type to character token
-	t->type = NUMBER;
-	t->num = val;
+	t->string = strdup(str);
+
+	//Store numerical value represented by string
+	t->value = val;
+
+	//Set token type to number token
+	t->tokenType = numTkn;
+
 	//Return token
 	return t;
 }
@@ -153,8 +179,7 @@ Token* newNUMtoken(int line, char* str, int val) {
 */
 Token* newBOOLtoken(int line, char* str, int val) {
 
-	//Store boolean value represented by val
-
+	//Allocate memory for token
 	Token* t = malloc(sizeof(Token));
 
 	//Check for allocation success
@@ -162,35 +187,19 @@ Token* newBOOLtoken(int line, char* str, int val) {
 		yyerror("Failure to allocate BOOL token\n");
 
 	//Set line number to code line count
-	t->line_num = line;
-	//Set letter value to encountered char
+	t->lineNumber = line;
+
 	//Duplicate user-supplied string
-	t->raw_str = str;
-	//Set token type to character token
-	t->type = BOOLEAN;
-	t->num = val;
+	t->string = strdup(str);
+
+	//Store boolean value represented by val
+	t->value = (val) ? 1 : 0;
+
+	//Set token type to boolean token
+	t->tokenType = boolTkn;
+
 	//Return token
 	return t;
-}
-
-/*
-* Convert string to upper case
-*
-* s - lowercase string
-*/
-void strupr(char* s) {
-
-	int i = 0;
-
-	//Until the end of the string
-	while(s[i] != '\0')
-	{
-		//Capitalize the character
-		s[i] = toupper((unsigned char)s[i]);
-		i++;
-	}
-
-	return;
 }
 
 /*
