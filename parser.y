@@ -1,19 +1,4 @@
 %{
-
-/**
- *
- * @date Spring 2018
- * @author Omar Soliman
- * @title Bison Parser
- *    _____
- *   /\   /\
- *  /  \ /  \
- * |    xmst |
- *  \  / \  /
- *   \/___\/
- *
- **/
-
 #define YYPARSER
 
 //System library import
@@ -110,6 +95,258 @@ constant:
 
 		$$ = t;
 	}
+	;
+// Grammer we created 
+program:
+       delcarationList
+       ;
+
+declarationList:
+               declarationList declaration 
+               | declaration
+               ;
+
+declaration:
+           varDeclaration
+           | funDeclaration
+           | recDeclaration
+           ;
+
+recDeclaration: RECORD ID LCB localDeclarations RCB
+              ;
+
+varDeclaration:
+              typeSpecifier varDeclList SCOLON
+              ;
+
+scopedVarDeclaration:
+                    scopedTypeSpecifier varDeclList SCOLON
+                    ;
+
+varDeclList:
+           varDeclList COMMA varDeclInitialize 
+           | varDeclInitialize
+           ;
+
+varDeclInitialize:
+                 varDeclId 
+                 | varDeclId COLON simpleExpression
+                 ;
+
+varDeclId:
+         ID 
+         | ID LSQB NUMCONST RCB
+         ;
+
+scopedTypeSpecifier:
+                   STATIC typeSpecifier 
+                   | typeSpecifier
+                   ;
+
+typeSpecifier:
+             returnTypeSpecifier 
+             | RECTYPE
+             ;
+
+returnTypeSpecifier:
+                   INT 
+                   | BOOL 
+                   | CHAR
+                   ;
+
+funDeclaration:
+              typeSpecifier ID LPARAN params RPARAN statement
+              | ID LPARAN params RPARAN statement
+              ;
+
+params:
+      paramList
+      | %empty
+      ;
+
+paramList:
+         paramList SCOLON paramTypeList 
+         | paramTypeList
+         ;
+
+paramTypeList:
+             typeSpecifier paramIdList
+             ;
+
+paramIdList:
+           paramIdList COMMA paramId 
+           | paramId
+           ;
+
+paramId:
+       ID 
+       | ID LSQB RSQB
+       ;
+
+statement:
+         matched
+         | unmatched
+         ;
+
+matched:
+        IF matched ELSE matched
+        | otherStmt
+        ;
+    
+otherStmt:
+         expressionStmt 
+         | compoundStmt 
+         | iterationStmt 
+         | returnStmt
+         | breakStmt
+         ;
+
+unmatched:
+        IF unmatched
+        | IF matched
+        | IF matched ELSE unmatched
+        ;
+
+compoundStmt:
+            LCB localDeclarations statementList RCB
+            ;
+
+localDeclarations:
+                 localDeclarations scopedVarDeclaration 
+                 | %empty
+                 ;
+
+statementList:
+             statementList statement 
+             | %empty
+             ;
+
+expressionStmt:
+              expression SCOLON 
+              | SCOLON
+              ;
+
+iterationStmt:
+	WHILE LPAREN simpleExpression RPAREN statement
+	;
+
+returnStmt:
+	RETURN SCOLON
+	| RETURN expression SCOLON
+	;
+
+breakStmt:
+	BREAK SCOLON
+
+
+expression:
+	mutable PLUS expression
+	| mutable ADDASS expression
+	| mutable SUBASS expression
+	| mutable MULTASS expression
+	| mutable DIVASS expression
+	| mutable INC
+	| mutable DEC
+	| simpleExpression
+	;
+
+simpleExpression:
+	simpleExpression OR andExpression
+	| andExpression
+	;
+
+andExpression: 
+	andExpression AND unaryRelExpression
+	| unaryRelExpression
+	;
+
+unaryRelExpression:
+	NOT unaryRelExpression
+	| relExpression
+	;
+
+relExpression:
+	sumExpression relop sumExpression
+	| sumExpression;
+
+relop:
+    LESSEQ
+	| LTHAN
+	| GTHAN
+	| GRTEQ
+	| ASSIGN
+	| NOTEQ
+	;
+
+sumExpression:
+	sumExpression sumop term
+	| term
+	;
+
+sumop:
+	PLUS
+	| DASH
+	;
+
+term:
+	term mulop unaryExpression
+	| unaryExpression
+	;
+
+mulop:
+	MUL
+	| DIV
+	| '%'
+	;
+
+unaryExpression:
+	unaryop unaryExpression
+	| factor
+	;
+
+unaryop:
+	DASH
+	| ASTERISK
+	| RANDOM
+	;
+
+factor:
+	immutable
+	| mutable
+	;
+
+mutable:
+	ID
+	| mutable LSQB expression RSQB
+	| mutable PERIOD ID
+	| LSQB expression RSQB
+	;
+
+immutable:
+	LPAREN expression RPAREN
+	| call
+	| constant
+	;
+
+call:
+	ID LPAREN args RPAREN
+	;
+
+args:
+	argList
+	| %empty
+	;
+
+argList: 
+	argList COMMA expression
+	| expression
+	;
+
+constant:
+	NUMCONST
+	| CHARCONST
+	| TRUE
+	| FALSE
 	;
 
 %%
