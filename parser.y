@@ -4,7 +4,7 @@
 
 //System library import
 #include<stdio.h>
-//GETOPT library
+#include<getopt.h>
 #include<string.h>
 
 //User defined structures
@@ -19,6 +19,7 @@ extern int yylex();
 extern int yyparse();
 extern FILE* yyin;
 extern int line_num;
+extern int yydebug;
 
 //Main AST to parse into
 //static TreeNode* syntaxTree;
@@ -357,7 +358,7 @@ constant:
 /*
 * MAIN FUNCTION
 */
-main() {
+int main(int argc, char* argv[]) {
 
 	/* Command line option variables
 	 *
@@ -383,7 +384,7 @@ main() {
 				break;
 			//Debug parser
 			case  'd':
-				YYDEBUG = 1;
+				yydebug = 1;
 				break;
 			//Unknown option
 			default:
