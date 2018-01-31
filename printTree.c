@@ -1,18 +1,3 @@
-
-/**
- *
- * @date Spring 2018
- * @author Omar Soliman
- * @title AST functions
- *    _____
- *   /\   /\
- *  /  \ /  \
- * |    xmst |
- *  \  / \  /
- *   \/___\/
- *
- **/
-
 //System library imports
 #include<stdio.h>
 #include<stdlib.h>

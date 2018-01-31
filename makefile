@@ -1,20 +1,3 @@
-#############################################
-#
-# Omar Soliman
-# Spring 2018
-# CSE 423
-#    _____
-#   /\   /\
-#  /  \ /  \
-# |    xmst |
-#  \  / \  /
-#   \/___\/
-#
-# Change GROUP to your group's name
-# Change LAB to PA number
-# Add file name to FILES for each assignment
-#
-#############################################
 
 #Group name
 GROUP = TAgroup
@@ -32,10 +15,11 @@ CC = gcc
 BASE = parser
 
 #Code files seperated by space
-FILES := scanType printTree
-CFILES := $(FILES:=.c)
+FL := ../assignment1/scanType
+FILES := scanType
+CFILES := $(FL:=.c)
 OFILES := $(FILES:=.o)
-HFILES := $(FILES:=.h)
+HFILES := $(FL:=.h)
 
 #Declare our source files to compile
 SRCS := $(BASE).y $(BASE).l $(CFILES) $(HFILES)

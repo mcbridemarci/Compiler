@@ -8,7 +8,7 @@
 #include<string.h>
 
 //User defined structures
-//#include "scanType.h"
+#include "scanType.h"
 //#include "printTree.h"
 
 //Enable detailed error messages
@@ -191,11 +191,6 @@ statement:
          matched
          | unmatched
          ;
-
-matched:
-        IF matched ELSE matched
-        | otherStmt
-        ;
     
 otherStmt:
          expressionStmt 
@@ -206,9 +201,14 @@ otherStmt:
          ;
 
 unmatched:
-        IF unmatched
-        | IF matched
-        | IF matched ELSE unmatched
+        IF LPAREN expressionStmt RPAREN unmatched
+        | IF LPAREN expressionStmt RPAREN matched
+        | IF LPAREN expressionStmt RPAREN matched ELSE unmatched
+        ;
+
+matched:
+        IF LPAREN expressionStmt RPAREN matched ELSE matched
+        | otherStmt
         ;
 
 compoundStmt:

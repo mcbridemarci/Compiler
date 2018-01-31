@@ -1,21 +1,6 @@
 #ifndef _printtree_H_
 #define _printtree_H_
 
-/**
- *
- * @date Spring 2018
- * @author Omar Soliman
- * @title AST Definitions
- *    _____
- *   /\   /\
- *  /  \ /  \
- * |    xmst |
- *  \  / \  /
- *   \/___\/
- *
- **/
-
-//Our grammar only permits up to   children per node
 #define MAXCHILDREN
 
 /*
