@@ -13,30 +13,30 @@ declaration:
            | recDeclaration
            ;
 
-recDeclaration: RECORD ID '{' localDeclarations '}'
+recDeclaration: RECORD ID LCB localDeclarations RCB
               ;
 
 varDeclaration:
-              typeSpecifier varDeclList ';'
+              typeSpecifier varDeclList SCOLON
               ;
 
 scopedVarDeclaration:
-                    scopedTypeSpecifier varDeclList ';'
+                    scopedTypeSpecifier varDeclList SCOLON
                     ;
 
 varDeclList:
-           varDeclList ',' varDeclInitialize 
+           varDeclList COMMA varDeclInitialize 
            | varDeclInitialize
            ;
 
 varDeclInitialize:
                  varDeclId 
-                 | varDeclId ':' simpleExpression
+                 | varDeclId COLON simpleExpression
                  ;
 
 varDeclId:
          ID 
-         | ID '[' NUMCONST  ']'
+         | ID LSQB NUMCONST RCB
          ;
 
 scopedTypeSpecifier:
@@ -56,7 +56,8 @@ returnTypeSpecifier:
                    ;
 
 funDeclaration:
-              typeSpecifier ID '(' params ')' statement '[' ID '(' params ')' statement
+              typeSpecifier ID LPARAN params RPARAN statement
+              | ID LPARAN params RPARAN statement
               ;
 
 params:
@@ -65,7 +66,7 @@ params:
       ;
 
 paramList:
-         paramList ';' paramTypeList 
+         paramList SCOLON paramTypeList 
          | paramTypeList
          ;
 
@@ -74,13 +75,13 @@ paramTypeList:
              ;
 
 paramIdList:
-           paramIdList ',' paramId 
+           paramIdList COMMA paramId 
            | paramId
            ;
 
 paramId:
        ID 
-       | ID '[' ']'
+       | ID LSQB RSQB
        ;
 
 statement:
@@ -102,13 +103,13 @@ otherStmt:
          ;
 
 unmatched:
-        if unmatched
-        | if matched
-        | if matched else unmatched
+        IF unmatched
+        | IF matched
+        | IF matched ELSE unmatched
         ;
 
 compoundStmt:
-            '{' localDeclarations statementList '}'
+            LCB localDeclarations statementList RCB
             ;
 
 localDeclarations:
@@ -122,21 +123,21 @@ statementList:
              ;
 
 expressionStmt:
-              expression ';' 
-              | ';'
+              expression SCOLON 
+              | SCOLON
               ;
 
 iterationStmt:
-	WHILE '(' simpleExpression ')' statement
+	WHILE LPAREN simpleExpression RPAREN statement
 	;
 
 returnStmt:
-	RETURN ';'
-	| RETURN expression ';'
+	RETURN SCOLON
+	| RETURN expression SCOLON
 	;
 
 breakStmt:
-	BREAK ';'
+	BREAK SCOLON
 
 
 expression:
@@ -171,10 +172,10 @@ relExpression:
 
 relop:
     LESSEQ
-	| LESS
-	| GRT
+	| LTHAN
+	| GTHAN
 	| GRTEQ
-	| ASS
+	| ASSIGN
 	| NOTEQ
 	;
 
@@ -185,7 +186,7 @@ sumExpression:
 
 sumop:
 	PLUS
-	| SUB
+	| DASH
 	;
 
 term:
@@ -205,9 +206,9 @@ unaryExpression:
 	;
 
 unaryop:
-	−
-	| ∗
-	| ?
+	DASH
+	| ASTERISK
+	| RANDOM
 	;
 
 factor:
@@ -217,19 +218,19 @@ factor:
 
 mutable:
 	ID
-	| mutable '[' expression ']'
-	| mutable '.' ID
-	| '[' expression ']'
+	| mutable LSQB expression RSQB
+	| mutable PERIOD ID
+	| LSQB expression RSQB
 	;
 
 immutable:
-	'(' expression ')'
+	LPAREN expression RPAREN
 	| call
 	| constant
 	;
 
 call:
-	ID '(' args ')'
+	ID LPAREN args RPAREN
 	;
 
 args:
@@ -238,7 +239,7 @@ args:
 	;
 
 argList: 
-	argList ',' expression
+	argList COMMA expression
 	| expression
 	;
 
