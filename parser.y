@@ -116,7 +116,10 @@ declaration:
            | recDeclaration
            ;
 
-recDeclaration: RECORD ID LCB localDeclarations RCB
+//added second line
+recDeclaration:
+              RECORD ID LCB localDeclarations RCB {printf("found a record! YAYA!!\n");}
+              | RECORD RECTYPE LCB localDeclarations RCB {printf("found a record! YAYA!!\n");}
               ;
 
 varDeclaration:
@@ -190,8 +193,31 @@ paramId:
 statement:
         matched
         | unmatched
-         ;
-    
+        ;
+
+/* Shift reduce conflict could be from
+        IF LPAREN expressionStmt RPAREN matched ELSE matched
+        conflicting with
+        IF LPAREN expressionStmt RPAREN matched
+
+        also maybe from
+        IF LPAREN expressionStmt RPAREN matched
+        conflicting with
+        IF LPAREN expressionStmt RPAREN matched ELSE unmatched
+*/
+
+//Still need to fix this!
+matched:
+        otherStmt
+        | IF LPAREN expression RPAREN matched ELSE matched {printf("found a matched IF ELSE @ line %d\n", line_num);}
+        ;
+
+unmatched:
+         IF LPAREN expression RPAREN matched {printf("found an IF IF ELSE or lonely if @ line %d\n", line_num);}
+         | IF LPAREN expression RPAREN unmatched {printf("found an IF with stuff after it @ line %d\n", line_num);}
+        //| IF LPAREN expression RPAREN matched ELSE unmatched {printf("\n\n\nIF MATCHED ELSE UNMATCHED\n\n\n\n");} //Do we really need this part??
+        ;
+
 otherStmt:
          expressionStmt 
          | compoundStmt 
@@ -200,25 +226,14 @@ otherStmt:
          | breakStmt
          ;
 
-unmatched:
-        IF LPAREN expressionStmt RPAREN unmatched
-        | IF LPAREN expressionStmt RPAREN matched
-        | IF LPAREN expressionStmt RPAREN matched ELSE unmatched
-        ;
-
-matched:
-        IF LPAREN expressionStmt RPAREN matched ELSE matched
-        | otherStmt
-        ;
-
 compoundStmt:
             LCB localDeclarations statementList RCB
             ;
 
 localDeclarations:
-                 localDeclarations scopedVarDeclaration 
-                 | %empty
-                 ;
+             localDeclarations scopedVarDeclaration 
+             | %empty
+             ;
 
 statementList:
              statementList statement 
@@ -226,8 +241,8 @@ statementList:
              ;
 
 expressionStmt:
-              expression BOOLCONST
-              | SCOLON
+              expression SCOLON //{printf("found an expressionSTMT @ line %d\n", line_num); }
+              | SCOLON //{printf("found an expressionSTMT @ line %d\n", line_num); }
               ;
 
 iterationStmt:
@@ -245,7 +260,7 @@ breakStmt:
 
 
 expression:
-    mutable EQ expression
+    mutable ASSIGN expression //{printf("found an = expression @ line %d\n", line_num); }
 	| mutable ADDASS expression
 	| mutable SUBASS expression
 	| mutable MULASS expression
@@ -261,31 +276,32 @@ simpleExpression:
 	;
 
 andExpression: 
-	andExpression AND unaryRelExpression
-	| unaryRelExpression
+	andExpression AND unaryRelExpression //{printf("found an and expression @ line %d\n", line_num); }
+	| unaryRelExpression //{printf("found an and expression (UNARY REL) @ line %d\n", line_num); }
 	;
 
 unaryRelExpression:
-	NOT unaryRelExpression
-	| relExpression
+	NOT unaryRelExpression  //{printf("found a NOT unaryRelExp @ line %d\n", line_num); }
+	| relExpression  //{printf("found a unaryRelExp @ line %d\n", line_num); }
 	;
 
 relExpression:
-	sumExpression relop sumExpression
-	| sumExpression;
+	sumExpression relop sumExpression  //{printf("found a RelExp with RELOP @ line %d\n", line_num); }
+	| sumExpression  //{printf("found a RelExp without RELOP @ line %d\n", line_num); }
+    ;
 
 relop:
-    LESSEQ
-	| GRTEQ
-	| GTHAN
-	| LTHAN
-	| NOTEQ
-	| ASSIGN
+    LESSEQ {printf("found a <= relop @ line %d\n", line_num); }
+	| GRTEQ {printf("found a >= relop @ line %d\n", line_num); }
+	| GTHAN {printf("found a > relop @ line %d\n", line_num); }
+	| LTHAN {printf("found a < relop @ line %d\n", line_num); }
+	| NOTEQ {printf("found a != relop @ line %d\n", line_num); }
+	| EQ {printf("found a == relop @ line %d\n", line_num); }
 	;
 
 sumExpression:
-	sumExpression sumop term
-	| term
+	sumExpression sumop term //{printf("found a sumExp with TERM @ line %d\n", line_num); }
+	| term //{printf("found a TERM @ line %d\n", line_num); }
 	;
 
 sumop:
@@ -321,7 +337,7 @@ factor:
 	;
 
 mutable:
-	ID
+	ID  {printf("found an ID @ line %d\n", line_num); }
 	| mutable LSQB expression RSQB
 	| mutable PERIOD ID
 	| LSQB expression RSQB
