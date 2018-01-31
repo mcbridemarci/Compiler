@@ -3,12 +3,12 @@
 
 //System library import
 #include<stdio.h>
-GETOPT library
+//GETOPT library
 #include<string.h>
 
 //User defined structures
-#include "scanType.h"
-#include "printTree.h"
+//#include "scanType.h"
+//#include "printTree.h"
 
 //Enable detailed error messages
 #define YYERROR_VERBOSE 1
@@ -20,7 +20,7 @@ extern FILE* yyin;
 extern int line_num;
 
 //Main AST to parse into
-static TreeNode* syntaxTree;
+//static TreeNode* syntaxTree;
 
 //Reference parser error function
 void yyerror(const char* s);
@@ -30,7 +30,7 @@ void yyerror(const char* s);
 //Use a union to hold possible grammar data types
 %union {
 	Token token;
-	struct TreeNode* treeNode;
+	//struct TreeNode* treeNode;
 }
 
 //Associate token types with union fields
@@ -42,7 +42,8 @@ void yyerror(const char* s);
 %token <token> MOD PERIOD LCB RCB
 
 //Types for nonterminals
-%type <treeNode> program declarationList ...
+/* %type <treeNode> program declarationList ...
+*/
 
 //Grammar starting point
 %start program
