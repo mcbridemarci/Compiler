@@ -356,69 +356,33 @@ constant:
 /*
 * MAIN FUNCTION
 */
-main() {
 
-	/* Command line option variables
-	 *
-	 * c - value of flag
-	 * long_options - array of word-sized options
-	 * option_index - location in arg list
-	 */
-	int c;
-	struct option long_options[] = {};
-	int option_index = 0;
 
-	//Check for command line args
-	do {
-		/*
-		* The string "" arg should contain all acceptable options
-		*
-		*/
-		c = g*********g(, , "", , &);
-		switch(c)
-		{
-			//Long option present
-			case 0:
-				break;
-			//Debug parser
-			case  :
-				yydebug = ;
-				break;
-			//No more options
-			case -1:
-				break;
-			//Unknown option
-			default:
-				return(-1);
-				break;
-		}
-	}while(c != -1);
+int main(int argc, char** argv) {
 
-	//File name has also been provided
-	if(optind < argc)
-	{
+	//Open file handle to read input
+	FILE* myfile;
 
-	}
-	//No file name given
-	else
-	{
+        if (argc > 1) {
+            myfile = fopen(argv[1], "r");
+	        if(!myfile) {
+                    printf("Excuse me, I can't read your c- file!\n");
+        		return(-1);
+	        }
+        } else {
+            myfile = stdin;
+        }
 
-	}
+	//Tell bison to read from file stream
+	yyin = myfile;
 
-	//Parse input until EOF
-	do
-	{
-
-	}
-	while(!feof(yyin));
-
-	printTree(stdout, syntaxTree);
-
-	//Close read-in file
-	fclose(yyin);
-
-	return(0);
+	//Parse the input
+	do{
+		yyparse();
+	}while(!feof(yyin));
 }
+
+
 
 /*
 * Parser error function
