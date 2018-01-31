@@ -1,5 +1,6 @@
 %{
 #define YYPARSER
+#define YYDEBUG 0
 
 //System library import
 #include<stdio.h>
@@ -356,8 +357,6 @@ constant:
 /*
 * MAIN FUNCTION
 */
-
-
 main() {
 
 	/* Command line option variables
@@ -369,50 +368,46 @@ main() {
 	int c;
 	struct option long_options[] = {};
 	int option_index = 0;
+        FILE* myfile;
 
+        //TODO ask TA about the weird g**********g function 
 	//Check for command line args
-	do {
+	while ((c = getopt_long(argc, argv, "d", long_options, &option_index)) != -1){
 		/*
 		* The string "" arg should contain all acceptable options
-		*
-		*/
-		c = g*********g(, , "", , &);
+                * */
 		switch(c)
 		{
-			//Long option present
-			case 0:
+		        //Long option present
+		        case 0:
 				break;
 			//Debug parser
-			case  :
-				yydebug = ;
-				break;
-			//No more options
-			case -1:
+			case  'd':
+				YYDEBUG = 1;
 				break;
 			//Unknown option
 			default:
 				return(-1);
 				break;
 		}
-	}while(c != -1);
+	}
 
 	//File name has also been provided
-	if(optind < argc)
-	{
-
-	}
-	//No file name given
-	else
-	{
-
+        if(option_index < argc){
+            printf ("non-option ARGV-elements: ");
+            while (optind < argc){
+                printf ("%s ", argv[optind++]);
+                putchar ('\n');
+            }
+            myfile = fopen(argv[optind], "r");
+        } else { //No file name given
+            yyin = stdin;   
 	}
 
 	//Parse input until EOF
-	do
-	{
-
-	}
-	while(!feof(yyin));
+        while(!feof(yyin)){
+            yyparse();
+        }
 
 	printTree(stdout, syntaxTree);
 
