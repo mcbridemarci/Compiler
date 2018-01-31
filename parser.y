@@ -139,7 +139,7 @@ varDeclInitialize:
 
 varDeclId:
          ID 
-         | ID LSQB NUMCONST RCB
+         | ID LSQB NUMCONST RSQB
          ;
 
 scopedTypeSpecifier:
@@ -188,8 +188,8 @@ paramId:
        ;
 
 statement:
-         matched
-         | unmatched
+        matched
+        | unmatched
          ;
     
 otherStmt:
@@ -226,7 +226,7 @@ statementList:
              ;
 
 expressionStmt:
-              expression SCOLON 
+              expression BOOLCONST
               | SCOLON
               ;
 
@@ -241,10 +241,11 @@ returnStmt:
 
 breakStmt:
 	BREAK SCOLON
+    ;
 
 
 expression:
-	mutable PLUS expression
+    mutable EQ expression
 	| mutable ADDASS expression
 	| mutable SUBASS expression
 	| mutable MULASS expression
@@ -275,11 +276,11 @@ relExpression:
 
 relop:
     LESSEQ
-	| LTHAN
-	| GTHAN
 	| GRTEQ
-	| ASSIGN
+	| GTHAN
+	| LTHAN
 	| NOTEQ
+	| ASSIGN
 	;
 
 sumExpression:
@@ -349,7 +350,9 @@ argList:
 constant:
 	NUMCONST
 	| CHARCONST
+    | BOOLCONST
     ;
+
 	/*| TRUE
 	| FALSE*/
 
