@@ -3,7 +3,7 @@ program:
        ;
 
 declarationList:
-               declaratioList declaration 
+               declarationList declaration 
                | declaration
                ;
 
@@ -13,15 +13,15 @@ declaration:
            | recDeclaration
            ;
 
-recDeclaration: 'record' ID '{' localDeclarations '}'
+recDeclaration: RECORD ID '{' localDeclarations '}'
               ;
 
 varDeclaration:
-              typeSpecifier varDeclList 
+              typeSpecifier varDeclList ';'
               ;
 
 scopedVarDeclaration:
-                    scopedTypeSpecifier varDeclList 
+                    scopedTypeSpecifier varDeclList ';'
                     ;
 
 varDeclList:
@@ -31,7 +31,7 @@ varDeclList:
 
 varDeclInitialize:
                  varDeclId 
-                 | varDeclId : simpleExpression
+                 | varDeclId ':' simpleExpression
                  ;
 
 varDeclId:
@@ -40,7 +40,7 @@ varDeclId:
          ;
 
 scopedTypeSpecifier:
-                   static typeSpecifier 
+                   STATIC typeSpecifier 
                    | typeSpecifier
                    ;
 
@@ -50,18 +50,18 @@ typeSpecifier:
              ;
 
 returnTypeSpecifier:
-                   int 
-                   | bool 
-                   | char
+                   INT 
+                   | BOOL 
+                   | CHAR
                    ;
 
 funDeclaration:
-              typeSpecifier ID '(' params  ')' statement '[' ID '(' params ')' statement
+              typeSpecifier ID '(' params ')' statement '[' ID '(' params ')' statement
               ;
 
 params:
-      paramList |
-      ''
+      paramList
+      | %empty
       ;
 
 paramList:
@@ -80,17 +80,32 @@ paramIdList:
 
 paramId:
        ID 
-       | ID '['  ']'
+       | ID '[' ']'
        ;
 
 statement:
+         matched
+         | unmatched
+         ;
+
+matched:
+        IF matched ELSE matched
+        | otherStmt
+        ;
+    
+otherStmt:
          expressionStmt 
          | compoundStmt 
-         | selectionStmt 
          | iterationStmt 
          | returnStmt
          | breakStmt
          ;
+
+unmatched:
+        if unmatched
+        | if matched
+        | if matched else unmatched
+        ;
 
 compoundStmt:
             '{' localDeclarations statementList '}'
@@ -98,60 +113,55 @@ compoundStmt:
 
 localDeclarations:
                  localDeclarations scopedVarDeclaration 
-                 | ''
+                 | %empty
                  ;
 
 statementList:
              statementList statement 
-             | ''
+             | %empty
              ;
 
 expressionStmt:
               expression ';' 
               | ';'
               ;
-              
-selectionStmt:
-	if '(' simpleExpression ')' statement
-	| if '( simpleExpression )' statement else statement
-	;
 
 iterationStmt:
-	while '(' simpleExpression ')' statement
+	WHILE '(' simpleExpression ')' statement
 	;
 
 returnStmt:
-	return ';'
-	| return expression ';'
+	RETURN ';'
+	| RETURN expression ';'
 	;
 
 breakStmt:
-	break ';'
+	BREAK ';'
 
 
 expression:
-	mutable '=' expression
-	| mutable '+=' expression
-	| mutable '−=' expression
-	| mutable '∗=' expression
-	| mutable '/=' expression
-	| mutable '++'
-	| mutable '−−'
+	mutable PLUS expression
+	| mutable ADDASS expression
+	| mutable SUBASS expression
+	| mutable MULTASS expression
+	| mutable DIVASS expression
+	| mutable INC
+	| mutable DEC
 	| simpleExpression
 	;
 
 simpleExpression:
-	simpleExpression or andExpression
+	simpleExpression OR andExpression
 	| andExpression
 	;
 
 andExpression: 
-	andExpression and unaryRelExpression
+	andExpression AND unaryRelExpression
 	| unaryRelExpression
 	;
 
 unaryRelExpression:
-	not unaryRelExpression
+	NOT unaryRelExpression
 	| relExpression
 	;
 
@@ -159,12 +169,13 @@ relExpression:
 	sumExpression relop sumExpression
 	| sumExpression;
 
-relop: '<='
-	| '<'
-	| '>'
-	| '>='
-	| '=='
-	| '!='
+relop:
+    LESSEQ
+	| LESS
+	| GRT
+	| GRTEQ
+	| ASS
+	| NOTEQ
 	;
 
 sumExpression:
@@ -173,8 +184,8 @@ sumExpression:
 	;
 
 sumop:
-	'+'
-	| '−'
+	PLUS
+	| SUB
 	;
 
 term:
@@ -183,9 +194,9 @@ term:
 	;
 
 mulop:
-	∗
-	| /
-	| %
+	MUL
+	| DIV
+	| '%'
 	;
 
 unaryExpression:
@@ -208,6 +219,7 @@ mutable:
 	ID
 	| mutable '[' expression ']'
 	| mutable '.' ID
+	| '[' expression ']'
 	;
 
 immutable:
@@ -222,7 +234,7 @@ call:
 
 args:
 	argList
-	| ''
+	| %empty
 	;
 
 argList: 
@@ -233,6 +245,6 @@ argList:
 constant:
 	NUMCONST
 	| CHARCONST
-	| true
-	| false
+	| TRUE
+	| FALSE
 	;
