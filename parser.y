@@ -48,7 +48,7 @@ void yyerror(const char* s);
 %start program
 
 %%
-
+/*  STUFF FOR TREE 
 program:
 	declarationList { syntaxTree = $1; }
 	;
@@ -70,7 +70,7 @@ declarationList:
 			$$ = $1;
 		}
 		else
-		{
+	{
 			$$ = $2;
 		}
 	}
@@ -96,9 +96,10 @@ constant:
 		$$ = t;
 	}
 	;
+    */
 // Grammer we created 
 program:
-       delcarationList
+       declarationList
        ;
 
 declarationList:
@@ -155,8 +156,8 @@ returnTypeSpecifier:
                    ;
 
 funDeclaration:
-              typeSpecifier ID LPARAN params RPARAN statement
-              | ID LPARAN params RPARAN statement
+              typeSpecifier ID LPAREN params RPAREN statement
+              | ID LPAREN params RPAREN statement
               ;
 
 params:
@@ -243,7 +244,7 @@ expression:
 	mutable PLUS expression
 	| mutable ADDASS expression
 	| mutable SUBASS expression
-	| mutable MULTASS expression
+	| mutable MULASS expression
 	| mutable DIVASS expression
 	| mutable INC
 	| mutable DEC
@@ -294,9 +295,9 @@ term:
 	;
 
 mulop:
-	MUL
-	| DIV
-	| '%'
+	ASTERISK
+	| FSLASH
+	| MOD
 	;
 
 unaryExpression:
@@ -345,9 +346,9 @@ argList:
 constant:
 	NUMCONST
 	| CHARCONST
-	| TRUE
-	| FALSE
-	;
+    ;
+	/*| TRUE
+	| FALSE*/
 
 %%
 
