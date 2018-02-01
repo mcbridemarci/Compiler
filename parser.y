@@ -116,10 +116,8 @@ declaration:
            | recDeclaration
            ;
 
-//added second line
 recDeclaration:
-              RECORD ID LCB localDeclarations RCB {printf("found a record! YAYA!!\n");}
-              | RECORD RECTYPE LCB localDeclarations RCB {printf("found a record! YAYA!!\n");}
+              RECORD RECTYPE LCB localDeclarations RCB {printf("found a record! YAYA!!\n");}
               ;
 
 varDeclaration:
@@ -195,33 +193,26 @@ statement:
         | unmatched
         ;
 
-/* Shift reduce conflict could be from
-        IF LPAREN expressionStmt RPAREN matched ELSE matched
-        conflicting with
-        IF LPAREN expressionStmt RPAREN matched
-
-        also maybe from
-        IF LPAREN expressionStmt RPAREN matched
-        conflicting with
-        IF LPAREN expressionStmt RPAREN matched ELSE unmatched
-*/
-
-//Still need to fix this!
 matched:
-        otherStmt
-        | IF LPAREN expression RPAREN matched ELSE matched {printf("found a matched IF ELSE @ line %d\n", line_num);}
+        IF LPAREN simpleExpression RPAREN matched ELSE matched {printf("found a matched IF ELSE @ line %d\n", line_num);}
+        | iterationHeader matched
+        | otherStmt
         ;
 
 unmatched:
-         IF LPAREN expression RPAREN matched {printf("found an IF IF ELSE or lonely if @ line %d\n", line_num);}
-         | IF LPAREN expression RPAREN unmatched {printf("found an IF with stuff after it @ line %d\n", line_num);}
-        //| IF LPAREN expression RPAREN matched ELSE unmatched {printf("\n\n\nIF MATCHED ELSE UNMATCHED\n\n\n\n");} //Do we really need this part??
+         IF LPAREN simpleExpression RPAREN matched {printf("found an IF IF ELSE or lonely if @ line %d\n", line_num);}
+         | IF LPAREN simpleExpression RPAREN unmatched {printf("found an IF with stuff after it @ line %d\n", line_num);}
+         | IF LPAREN simpleExpression RPAREN matched ELSE unmatched {printf("\n\n\nIF MATCHED ELSE UNMATCHED\n\n\n\n");} 
+        | iterationHeader unmatched
+        ;
+
+iterationHeader: 
+        WHILE LPAREN simpleExpression RPAREN 
         ;
 
 otherStmt:
          expressionStmt 
          | compoundStmt 
-         | iterationStmt 
          | returnStmt
          | breakStmt
          ;
@@ -244,10 +235,6 @@ expressionStmt:
               expression SCOLON //{printf("found an expressionSTMT @ line %d\n", line_num); }
               | SCOLON //{printf("found an expressionSTMT @ line %d\n", line_num); }
               ;
-
-iterationStmt:
-	WHILE LPAREN simpleExpression RPAREN statement
-	;
 
 returnStmt:
 	RETURN SCOLON
