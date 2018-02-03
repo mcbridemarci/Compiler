@@ -11,9 +11,9 @@
 * Expression node
 */
 typedef enum {
-    DEC,
-    STATE,
-    EXP
+    DeclK,
+    StmtK,
+    ExpK
 } NodeKind;
 
 
