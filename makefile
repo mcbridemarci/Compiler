@@ -1,6 +1,5 @@
-
 #Group name
-GROUP = TAgroup
+GROUP = :tada:
 
 #Lab number
 LAB = 2
@@ -15,11 +14,10 @@ CC = gcc
 BASE = parser
 
 #Code files seperated by space
-FL := ../assignment1/scanType
-FILES := scanType
-CFILES := $(FL:=.c)
+FILES := scanType printTree
+CFILES := $(FILES:=.c)
 OFILES := $(FILES:=.o)
-HFILES := $(FL:=.h)
+HFILES := $(FILES:=.h)
 
 #Declare our source files to compile
 SRCS := $(BASE).y $(BASE).l $(CFILES) $(HFILES)
@@ -39,7 +37,7 @@ LIBS = -lfl
 BFLAGS = -v -t -d
 
 #Uncomment for flex debugging
-FFLAGS = -d
+#FFLAGS = -d
 
 
 
@@ -53,15 +51,15 @@ FFLAGS = -d
 
 #To create executable, ensure OBJECT & SOURCE files exist first, then run command
 $(BIN): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(BIN)
+    $(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(BIN)
 
 #To create bison files, ensure parser files exist
 $(BASE).tab.h $(BASE).tab.c: $(BASE).y
-	bison $(BFLAGS) $(BASE).y
+    bison $(BFLAGS) $(BASE).y
 
 #To create flex file, ensure flex and bison header exist first
 lex.yy.c: $(BASE).l $(BASE).tab.h
-	flex $(FFLAGS) $(BASE).l
+    flex $(FFLAGS) $(BASE).l
 
 
 
@@ -70,9 +68,10 @@ all: clean $(BIN)
 
 #Keyword to type after make to clean non-source code files
 clean:
-	rm -f $(OBJS) $(BIN) lex.yy.c $(BASE).tab.* $(BASE).output output *~
+    rm -f $(OBJS) $(BIN) lex.yy.c $(BASE).tab.* $(BASE).output output *~
 
 #Keyword to type after make to create tarball of source code
 tar:
-	tar -cvf $(GROUP)_PA$(LAB)_.tar $(SRCS) makefile
+    tar -cvf $(GROUP)_PA$(LAB)_.tar $(SRCS) makefile
+
 

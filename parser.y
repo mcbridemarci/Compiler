@@ -9,7 +9,7 @@
 
 //User defined structures
 #include "scanType.h"
-//#include "printTree.h"
+#include "printTree.h"
 
 //Enable detailed error messages
 #define YYERROR_VERBOSE 1
@@ -22,7 +22,7 @@ extern int line_num;
 extern int yydebug;
 
 //Main AST to parse into
-//static TreeNode* syntaxTree;
+static TreeNode* syntaxTree;
 
 //Reference parser error function
 void yyerror(const char* s);
@@ -32,7 +32,7 @@ void yyerror(const char* s);
 //Use a union to hold possible grammar data types
 %union {
 	Token token;
-	//struct TreeNode* treeNode;
+	struct TreeNode* treeNode;
 }
 
 //Associate token types with union fields
@@ -44,14 +44,13 @@ void yyerror(const char* s);
 %token <token> MOD PERIOD LCB RCB
 
 //Types for nonterminals
-/* %type <treeNode> program declarationList ...
-*/
+%type <treeNode> program declarationList ...
+
 
 //Grammar starting point
 %start program
 
 %%
-/*  STUFF FOR TREE 
 program:
 	declarationList { syntaxTree = $1; }
 	;
@@ -99,8 +98,7 @@ constant:
 		$$ = t;
 	}
 	;
-    */
-// Grammer we created 
+
 program:
        declarationList
        ;
@@ -117,7 +115,7 @@ declaration:
            ;
 
 recDeclaration:
-              RECORD RECTYPE LCB localDeclarations RCB {printf("found a record! YAYA!!\n");}
+              RECORD RECTYPE LCB localDeclarations RCB
               ;
 
 varDeclaration:
@@ -194,16 +192,16 @@ statement:
         ;
 
 matched:
-        IF LPAREN simpleExpression RPAREN matched ELSE matched {printf("found a matched IF ELSE @ line %d\n", line_num);}
+        IF LPAREN simpleExpression RPAREN matched ELSE matched 
         | iterationHeader matched
         | otherStmt
         ;
 
 unmatched:
-         IF LPAREN simpleExpression RPAREN matched {printf("found an IF IF ELSE or lonely if @ line %d\n", line_num);}
-         | IF LPAREN simpleExpression RPAREN unmatched {printf("found an IF with stuff after it @ line %d\n", line_num);}
-         | IF LPAREN simpleExpression RPAREN matched ELSE unmatched {printf("\n\n\nIF MATCHED ELSE UNMATCHED\n\n\n\n");} 
-        | iterationHeader unmatched
+         IF LPAREN simpleExpression RPAREN matched
+         | IF LPAREN simpleExpression RPAREN unmatched 
+         | IF LPAREN simpleExpression RPAREN matched ELSE unmatched 
+         | iterationHeader unmatched
         ;
 
 iterationHeader: 
@@ -232,8 +230,8 @@ statementList:
              ;
 
 expressionStmt:
-              expression SCOLON //{printf("found an expressionSTMT @ line %d\n", line_num); }
-              | SCOLON //{printf("found an expressionSTMT @ line %d\n", line_num); }
+              expression SCOLON
+              | SCOLON 
               ;
 
 returnStmt:
@@ -247,7 +245,7 @@ breakStmt:
 
 
 expression:
-    mutable ASSIGN expression //{printf("found an = expression @ line %d\n", line_num); }
+    mutable ASSIGN expression 
 	| mutable ADDASS expression
 	| mutable SUBASS expression
 	| mutable MULASS expression
@@ -263,32 +261,31 @@ simpleExpression:
 	;
 
 andExpression: 
-	andExpression AND unaryRelExpression //{printf("found an and expression @ line %d\n", line_num); }
-	| unaryRelExpression //{printf("found an and expression (UNARY REL) @ line %d\n", line_num); }
+	andExpression AND unaryRelExpression 
+	| unaryRelExpression 
 	;
 
 unaryRelExpression:
-	NOT unaryRelExpression  //{printf("found a NOT unaryRelExp @ line %d\n", line_num); }
-	| relExpression  //{printf("found a unaryRelExp @ line %d\n", line_num); }
+	NOT unaryRelExpression  
+	| relExpression 
 	;
 
 relExpression:
-	sumExpression relop sumExpression  //{printf("found a RelExp with RELOP @ line %d\n", line_num); }
-	| sumExpression  //{printf("found a RelExp without RELOP @ line %d\n", line_num); }
+	sumExpression relop sumExpression 
+	| sumExpression  
     ;
 
 relop:
-    LESSEQ {printf("found a <= relop @ line %d\n", line_num); }
-	| GRTEQ {printf("found a >= relop @ line %d\n", line_num); }
-	| GTHAN {printf("found a > relop @ line %d\n", line_num); }
-	| LTHAN {printf("found a < relop @ line %d\n", line_num); }
-	| NOTEQ {printf("found a != relop @ line %d\n", line_num); }
-	| EQ {printf("found a == relop @ line %d\n", line_num); }
+    LESSEQ 
+	| GRTEQ 
+	| GTHAN 
+	| LTHAN 
+	| EQ 
 	;
 
 sumExpression:
-	sumExpression sumop term //{printf("found a sumExp with TERM @ line %d\n", line_num); }
-	| term //{printf("found a TERM @ line %d\n", line_num); }
+	sumExpression sumop term 
+	| term 
 	;
 
 sumop:
@@ -324,7 +321,7 @@ factor:
 	;
 
 mutable:
-	ID  {printf("found an ID @ line %d\n", line_num); }
+	ID 
 	| mutable LSQB expression RSQB
 	| mutable PERIOD ID
 	| LSQB expression RSQB
@@ -377,7 +374,6 @@ int main(int argc, char* argv[]) {
 	int option_index = 0;
         FILE* myfile;
 
-        //TODO ask TA about the weird g**********g function 
 	//Check for command line args
 	while ((c = getopt_long(argc, argv, "d", long_options, &option_index)) != -1){
 		/*

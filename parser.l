@@ -1,19 +1,5 @@
 %{
 
-/**
- *
- * @date Spring 2018
- * @author Omar Soliman
- * @title SCANNER LEXING FILE
- *    _____
- *   /\   /\
- *  /  \ /  \
- * |    xmst |
- *  \  / \  /
- *   \/___\/
- *
- **/
-
 //System libraries
 #include<stdio.h>
 #include<string.h>
