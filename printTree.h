@@ -1,7 +1,7 @@
 #ifndef _printtree_H_
 #define _printtree_H_
 
-#define MAXCHILDREN
+#define MAXCHILDREN  3
 
 /*
 * Main kind of Tree Node
