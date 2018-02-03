@@ -25,9 +25,9 @@ typedef enum {
 * Record declaration
 */
 typedef enum {
-    VARK,
-    FUNCK,
-    RECK
+    VarK,
+    FuncK,
+    RecK
 } DeclKind;
 
 /*
@@ -40,11 +40,11 @@ typedef enum {
 * Compound statement
 */
 typedef enum {
-    IFK,
-    WHILEK,
-    RETURNK,
-    BREAKK,
-    COMPOUNDK
+    IfK,
+    WhileK,
+    ReturnK,
+    BreakK,
+    CompundK
 } StmtKind;
 
 /*
@@ -55,9 +55,9 @@ typedef enum {
 * ID expression
 */
 typedef enum {
-    OPK,
-    CONSTK,
-    IDK
+    OpK,
+    ConstK,
+    IdK
 } ExpKind;
 
 /*
