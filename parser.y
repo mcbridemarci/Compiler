@@ -80,7 +80,6 @@ declarationList:
 	;
 
 declaration:
-//Just passing stuff up the stack
 	varDeclaration { $$ = $1; }
 	| funDeclaration { $$ = $1; }
 	| recDeclaration { $$ = $1; }
@@ -245,13 +244,62 @@ breakStmt:
 
 
 expression:
-    mutable ASSIGN expression 
-	| mutable ADDASS expression
-	| mutable SUBASS expression
-	| mutable MULASS expression
-	| mutable DIVASS expression
-	| mutable INC
-	| mutable DEC
+    mutable ASSIGN {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+        t->nodekind = EXP;
+		t->kind.exp = OPK;
+        t->attr.op = ASSIGN;
+		$$ = t;
+        } expression 
+	| mutable ADDASS {
+		TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+        t->nodekind = EXP;
+		t->kind.exp = OPK;
+        t->attr.op = ADDASS;
+		$$ = t;
+        } expression
+	| mutable SUBASS {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+        t->nodekind = EXP;
+		t->kind.exp = OPK;
+        t->attr.op = ASSIGN;
+		$$ = t;
+        } expression
+	| mutable MULASS {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		
+        //t->kind = ;
+        t->attr.op = $2;
+		$$ = t;
+        } expression
+	| mutable DIVASS {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		
+        //t->kind = ;
+        t->attr.op = $2;
+		$$ = t;
+        } expression
+	| mutable INC {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		
+        //t->kind = ;
+        t->attr.op = $2;
+		$$ = t;
+        }
+	| mutable DEC {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		
+        //t->kind = ;
+        t->attr.op = $2;
+		$$ = t;
+        }
 	| simpleExpression
 	;
 
@@ -278,9 +326,28 @@ relExpression:
 relop:
     LESSEQ 
 	| GRTEQ 
-	| GTHAN 
-	| LTHAN 
-	| EQ 
+	| GTHAN {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
+	| LTHAN {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
+
+	| EQ {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
 	;
 
 sumExpression:
@@ -289,8 +356,20 @@ sumExpression:
 	;
 
 sumop:
-	PLUS
-	| DASH
+	PLUS { 
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
+	| DASH {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
 	;
 
 term:
@@ -299,9 +378,29 @@ term:
 	;
 
 mulop:
-	ASTERISK
-	| FSLASH
-	| MOD
+	ASTERISK {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
+
+	| FSLASH {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
+
+	| MOD {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
 	;
 
 unaryExpression:
@@ -310,9 +409,27 @@ unaryExpression:
 	;
 
 unaryop:
-	DASH
-	| ASTERISK
-	| RANDOM
+	DASH {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
+	| ASTERISK  {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
+	| RANDOM {
+        TreeNode* t = newExpNode(ConstK);
+        t->lineno = linenum;
+		//t->kind = ;
+        t->attr.op = $1;
+		$$ = t;
+        }
 	;
 
 factor:
