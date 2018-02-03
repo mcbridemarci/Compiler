@@ -12,7 +12,9 @@ extern int line_num;
 /*
 * Track indentation level for AST printing?
 */
-
+#define TAB tab=2
+#define UNTAB untab-=2
+static level=0; 
 
 //Reference parser error function
 void yyerror(const char* s);
