@@ -1,7 +1,7 @@
 #ifndef _printtree_H_
 #define _printtree_H_
 
-#define MAXCHILDREN
+#define MAXCHILDREN 3
 
 /*
 * Main kind of Tree Node
@@ -10,7 +10,11 @@
 * Statement node
 * Expression node
 */
-typedef enum {} NodeKind;
+typedef enum {
+    DEC,
+    STATE,
+    EXP
+} NodeKind;
 
 
 /*
@@ -20,7 +24,11 @@ typedef enum {} NodeKind;
 * Function declaration
 * Record declaration
 */
-typedef enum {} DeclKind;
+typedef enum {
+    VARK,
+    FUNCK,
+    RECK
+} DeclKind;
 
 /*
 * Kinds of statements
@@ -31,7 +39,13 @@ typedef enum {} DeclKind;
 * Break statement
 * Compound statement
 */
-typedef enum {} StmtKind;
+typedef enum {
+    IFK,
+    WHILEK,
+    RETURNK,
+    BREAKK,
+    COMPOUNDK
+} StmtKind;
 
 /*
 * Kinds of expressions
@@ -40,7 +54,11 @@ typedef enum {} StmtKind;
 * Constant expression
 * ID expression
 */
-typedef enum {} ExpKind;
+typedef enum {
+    OPK,
+    CONSTK,
+    IDK
+} ExpKind;
 
 /*
 * Expression return type
@@ -93,7 +111,7 @@ typedef struct TreeNode {
 	/*
 	* Pointer to child AST node array
 	*/
-	struct TreeNode* child[MAX#];
+	struct TreeNode* child[MAXCHILDREN];
 
 	/*
 	* Pointer to next AST node
