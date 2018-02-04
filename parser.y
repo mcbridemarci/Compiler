@@ -65,61 +65,27 @@ void yyerror(const char* s);
 
 %%
 
-declarationList:
-	declarationList declaration
-	{
-
- //Good idea code for left recursion to link together lists
- //No malloc here because the list members should already exist, yeah?
-		TreeNode* t = $1;
-
-		if(t != NULL)
-		{
-			while(t->sibling != NULL)
-				t = t->sibling;
-
-			t->sibling = $2;
-			$$ = $1;
-		}
-		else
-	{
-			$$ = $2;
-		}
-	}
-	| %empty { $$ = NULL; }
-	;
-
-declaration:
-	varDeclaration { $$ = $1; }
-	| funDeclaration { $$ = $1; }
-	| recDeclaration { $$ = $1; }
-	;
-
-constant:
-	NUMCONST
-	{
-//This is where/how list members come from/in
-		TreeNode* t = newExpNode(ConstK);
-
-		t->attr.value = $1.value;
-		t->expType = Integer;
-
-		$$ = t;
-	}
-	;
-
-
-
-
-
 //OUR STUFF
-//TODO REMOVE STUFF ABOVE/INTEGRATE IT
 program:
        declarationList { syntaxTree = $1; }
        ;
 
 declarationList:
-               declarationList declaration 
+               declarationList declaration {
+                   TreeNode* t = $1;
+            		if(t != NULL)
+            		{
+            			while(t->sibling != NULL)
+            				t = t->sibling;
+            
+            			t->sibling = $2;
+            			$$ = $1;
+            		}
+            		else
+            	    {
+            			$$ = $2;
+            		}
+	           }
                | declaration
                ;
 
