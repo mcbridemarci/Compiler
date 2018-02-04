@@ -159,7 +159,7 @@ TreeNode* newDeclNode(DeclKind kind) {
 /*
  * Print a token
  */ 
-void printOp(TokenType token) {
+void printOp(TokenClass token) {
     
     switch (token) {
         case Plus: 

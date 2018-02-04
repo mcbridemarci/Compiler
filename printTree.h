@@ -232,7 +232,7 @@ TreeNode* newStmtNode(StmtKind);
 /*
 * Print the given token
 */
-void printToken(TokenType token);
+void printToken(TokenClass token);
 
 
 #endif
