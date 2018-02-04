@@ -118,6 +118,7 @@ varDeclInitialize:
 
 varDeclId:
          ID {
+ 		printf("var dec id %s\n", $1);
 		TreeNode* t = newDeclNode(VarK);
 		t->attr.string = $1;
 		t->expType = varType;
