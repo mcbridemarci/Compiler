@@ -25,8 +25,6 @@ SRCS := $(BASE).y $(BASE).l $(CFILES) $(HFILES)
 #Declare object files to link
 OBJS := lex.yy.o $(BASE).tab.o $(OFILES)
 
-
-
 #Uncomment for gcc debugging
 #CFLAGS = -g
 
@@ -67,11 +65,11 @@ lex.yy.c: $(BASE).l $(BASE).tab.h
 all: clean $(BIN)
 
 #Keyword to type after make to clean non-source code files
-clean:
-    rm -f $(OBJS) $(BIN) lex.yy.c $(BASE).tab.* $(BASE).output output *~
+clean: 
+	rm -f $(OBJS) $(BIN) lex.yy.c $(BASE).tab.* $(BASE).output output *~
 
 #Keyword to type after make to create tarball of source code
-tar:
-    tar -cvf $(GROUP)_PA$(LAB)_.tar $(SRCS) makefile
+tar: 
+	tar -cvf $(GROUP)_PA$(LAB)_.tar $(SRCS) makefile
 
 

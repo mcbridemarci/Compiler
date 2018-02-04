@@ -269,12 +269,11 @@ void printTree(FILE* output, TreeNode* tree) {
 		{
 			switch (tree->kind.decl)
 			{
-        //TODO: finish bellow & where does Param go?!
         case VarK:
-          prinf("Var %s of type %s [line: %d]\n", , , lineno);
+          prinf("Var %s of type %s [line: %d]\n", tree->attr.name, expType, lineno);
           break;
         case FuncK:
-          printf("Func %s returns type %s [line: %d]\n", lineno);
+          printf("Func %s returns type %s [line: %d]\n", tree->attr.name, expType, lineno);
           break;
         case RecK:
           printf("Return [line: %d]\n", lineno);
