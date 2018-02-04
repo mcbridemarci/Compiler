@@ -24,6 +24,8 @@ extern int yydebug;
 //Main AST to parse into
 static TreeNode* syntaxTree;
 
+int varType = VoidT;	//what types of variables do we have?
+
 //Reference parser error function
 void yyerror(const char* s);
 
@@ -143,13 +145,18 @@ varDeclInitialize:
 
 varDeclId:
          ID {
-		TreeNode* t = newDeclNode(ConstK);
-		t->child[0] = $1;
-		t->child[1] = $3;
-		t->attr.op = MULASS;
-		$$ = t;	
+		TreeNode* t = newDeclNode(VarK);
+		t->attr.string = $1;
+		t->expType = varType;
+		$$ = t;
 		}
-         | ID LSQB NUMCONST RSQB {}
+         | ID LSQB NUMCONST RSQB {
+		TreeNode* t = newDeclNode(VarK);
+		t->attr.string = $1;
+		t->expType = varType;
+		t->isArray = 1;
+		$$ = t;
+		}
          ;
 
 scopedTypeSpecifier:
@@ -158,14 +165,26 @@ scopedTypeSpecifier:
                    ;
 
 typeSpecifier:
-             returnTypeSpecifier 
-             | RECTYPE
+             returnTypeSpecifier {
+		varType = $1;
+		}
+             | RECTYPE  {
+		TreeNode* t = newDeclNode(RecK);
+		t->recType = $1;
+		$$ = t;
+		}
              ;
 
 returnTypeSpecifier:
-                   INT 
-                   | BOOL 
-                   | CHAR
+                   INT {
+			$$ = NumT;
+			}
+                   | BOOL {
+			$$ = BoolT;
+			}
+                   | CHAR {
+			$$ = CharT;
+			}
                    ;
 
 funDeclaration:
