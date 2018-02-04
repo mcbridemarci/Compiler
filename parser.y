@@ -533,7 +533,7 @@ int main(int argc, char* argv[]) {
             yyparse();
         }
 
-	printTree(stdout, syntaxTree);
+	printTree(syntaxTree);
 
 	//Close read-in file
 	fclose(yyin);
