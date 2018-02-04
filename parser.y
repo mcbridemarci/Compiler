@@ -38,26 +38,26 @@ void yyerror(const char* s);
 }
 
 //Associate token types with union fields
-%token <token> ID NUMCONST CHARCONST RECTYPE BOOLCONST RECORD
-%token <token> STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK OR AND NOT
-%token <token> EQ NOTEQ MULASS INC ADDASS DEC SUBASS DIVASS LESSEQ GRTEQ
-%token <token> ASTERISK RANDOM DASH FSLASH LPAREN RPAREN PLUS COMMA
-%token <token> LSQB RSQB COLON SCOLON LTHAN ASSIGN GTHAN
-%token <token> MOD PERIOD LCB RCB
+%token <treeNode> ID NUMCONST CHARCONST RECTYPE BOOLCONST RECORD
+%token <treeNode> STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK OR AND NOT
+%token <treeNode> EQ NOTEQ MULASS INC ADDASS DEC SUBASS DIVASS LESSEQ GRTEQ
+%token <treeNode> ASTERISK RANDOM DASH FSLASH LPAREN RPAREN PLUS COMMA
+%token <treeNode> LSQB RSQB COLON SCOLON LTHAN ASSIGN GTHAN
+%token <treeNode> MOD PERIOD LCB RCB
 
 //Types for nonterminals
-%type <token> program declarationList declaration recDeclaration
-%type <token> varDeclaration scopedVarDeclaration varDeclList
-%type <token> varDeclInitialize varDeclId scopedTypeSpecifier
-%type <token> typeSpecifier returnTypeSpecifier funDeclaration
-%type <token> params paramList paramTypeList paramIdList paramId
-%type <token> statement matched unmatched iterationHeader otherStmt
-%type <token> compoundStmt localDeclarations statementList 
-%type <token> expressionStmt returnStmt breakStmt expression
-%type <token> simpleExpression andExpression unaryRelExpression
-%type <token> relExpression relop sumExpression sumop term mulop
-%type <token> unaryExpression unaryop factor mutable immutable call
-%type <token> args argList constant
+%type <treeNode> program declarationList declaration recDeclaration
+%type <treeNode> varDeclaration scopedVarDeclaration varDeclList
+%type <treeNode> varDeclInitialize varDeclId scopedTypeSpecifier
+%type <treeNode> typeSpecifier returnTypeSpecifier funDeclaration
+%type <treeNode> params paramList paramTypeList paramIdList paramId
+%type <treeNode> statement matched unmatched iterationHeader otherStmt
+%type <treeNode> compoundStmt localDeclarations statementList 
+%type <treeNode> expressionStmt returnStmt breakStmt expression
+%type <treeNode> simpleExpression andExpression unaryRelExpression
+%type <treeNode> relExpression relop sumExpression sumop term mulop
+%type <treeNode> unaryExpression unaryop factor mutable immutable call
+%type <treeNode> args argList constant
 
 
 //Grammar starting point
