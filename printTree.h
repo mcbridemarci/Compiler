@@ -44,7 +44,7 @@ typedef enum {
     WhileK,
     ReturnK,
     BreakK,
-    CompundK
+    CompoundK
 } StmtKind;
 
 /*

@@ -57,7 +57,7 @@ TreeNode* newStmtNode(StmtKind kind) {
 	t->ref = 0;
 
 	//Set return type to default
-	t->expType = Void;
+	t->expType = VoidT;
 
 	//Return finished node
 	return t;
@@ -100,7 +100,7 @@ TreeNode* newExpNode(ExpKind kind) {
 	t->ref = 0;
 
 	//Set return type to default
-	t->expType = Void;
+	t->expType = VoidT;
 
 	//Return finished node
 	return t;
@@ -109,7 +109,7 @@ TreeNode* newExpNode(ExpKind kind) {
 /*
 * Allocate new Declaration node
 */
-TreeNode* newExpNode(DeclKind kind) {
+TreeNode* newDeclNode(DeclKind kind) {
 
 	//Allocate memory for node
 	TreeNode *t = (TreeNode*) malloc(sizeof(TreeNode));
@@ -127,7 +127,7 @@ TreeNode* newExpNode(DeclKind kind) {
 
 	//Set node to Statement and kind
 	t->nodekind = DeclK;
-	t->kind.dec = kind;
+	t->kind.decl = kind;
 
 	//Set line number to parser line count
 	t->lineno = line_num;
@@ -144,7 +144,7 @@ TreeNode* newExpNode(DeclKind kind) {
 	t->ref = 0;
 
 	//Set return type to default
-	t->expType = Void;
+	t->expType = VoidT;
 
 	//Return finished node
 	return t;
@@ -163,13 +163,67 @@ void printTree(FILE* output, TreeNode* tree) {
 		{
 			switch (tree->kind.stmt)
 			{
+       case Ifk:
+        prinf("If [line: %d]\n", lineno);
+        break;
+       case WhileK:
+        prinf("While [line: %d]\n", lineno);
+        break;
+       case ReturnK:
+        prinf("Return [line: %d]\n", lineno);
+        break;
+       case BreakK:
+        prinf("Break [line: %d]\n", lineno);
+        break;
+       case CompoundK:
+        prinf("Compound [line: %d]\n", lineno);
+        break;
+       default: 
+        prinf("Whoops, unrecognized expression.\n");
+        break;
 			}
 		}
 		//Expression node printing
 		else if (tree->nodekind == Expk)
+		{
+			switch (tree->kind.exp)
+			{
+        case Opk:
+          printOp(tree->attr.op);
+          printf("[line: %d]\n", lineno);
+          break;
+        case ConstK:
+          printf("Const: %d [line: %d]\n", tree->attr.val, lineno);
+          break;
+        case IdK:
+          printf("Id: %s [line: %d]\n", tree->attr.name, lineno);
+          break;
+        default: 
+          prinf("Whoops, unrecognized expression.\n");
+          break;
+			}
+		}
 
 		//Declaration node printing
 		else if (tree->nodekind == Declk)
+		{
+			switch (tree->kind.decl)
+			{
+        //TODO: finish bellow & where does Param go?!
+        case VarK:
+          prinf("Var %s of type %s [line: %d]\n", , , lineno);
+          break;
+        case FuncK:
+          printf("Func %s returns type %s [line: %d]\n", lineno);
+          break;
+        case RecK:
+          printf("Return [line: %d]\n", lineno);
+          break;
+        default: 
+          prinf("Whoops, unrecognized declaration.\n");
+          break;
+			}
+		}
 		
 		else
 			yyerror("Unknown node");
@@ -187,9 +241,9 @@ void printTree(FILE* output, TreeNode* tree) {
 
 		//Point to the next node in the AST
 		tree = tree->sibling;
-
 	}
 	//END WHILE
+  UNTAB;
 
 	return;
 }
