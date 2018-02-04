@@ -202,5 +202,11 @@ TreeNode* newExpNode(ExpKind);
 */
 TreeNode* newStmtNode(StmtKind);
 
+/*
+* Print the given token
+*/
+void printToken(TokenType token);
+
+
 #endif
 

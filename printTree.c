@@ -149,6 +149,66 @@ TreeNode* newExpNode(DeclKind kind) {
 	//Return finished node
 	return t;
 }
+/*
+ * Print a token
+ */ 
+void printOp(TokenType token) {
+    
+    switch (token) {
+        case PLUS: 
+            printf("Op: + "); break;
+        case INC:
+            printf("Op: ++ "); break;
+        case DASH:
+            printf("Op: - "); break;
+        case DEC:
+            printf("Op: -- "); break;
+        case ASSIGN:
+            printf("Assign: = "); 
+        case ADDASS:
+            printf("Op: += "); break;
+        case SUBASS:
+            printf("Op: -= "); break;
+        case MULASS:
+            printf("Op: *= "); break;
+        case DIVASS:
+            printf("Op: /= "); break;
+        case ASTERISK:
+            printf("Op: * "); break;
+        case FSLASH:
+            printf("Op: / "); break;
+        case NOT:
+            printf("Op: not "); break;
+        case AND:
+            printf("Op: and "); break;
+        case OR:
+            printf("Op: or "); break;
+        case EQ:
+            printf("Op: == "); break;
+        case NOTEQ:
+            printf("Op: != "); break;
+        case LESSEQ:
+            printf("Op: <= "); break;
+        case LTHAN:
+            printf("Op: < "); break;
+        case GRTEQ:
+            printf("Op: >= "); break;
+        case GTHAN:
+            printf("Op: > "); break;
+        case RANDOM:
+            printf("Op: ? "); break;
+        case MOD:
+            printf("Op: % "); break;
+        case LSQB:
+            printf("Op: [ "); break;
+        case PERIOD:
+            printf("Op: . "); break;
+        case COLON:
+            printf("Op: : "); break;
+        default: /* should never happen */
+            printf("Unknown token %d\n", token);
+    }
+}
 
 /*
 * Print the AST
