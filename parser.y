@@ -46,18 +46,18 @@ void yyerror(const char* s);
 %token <token> MOD PERIOD LCB RCB
 
 //Types for nonterminals
-%type <treeNode> program declarationList declaration recDeclaration
-%type <treeNode> varDeclaration scopedVarDeclaration varDeclList
-%type <treeNode> varDeclInitialize varDeclId scopedTypeSpecifier
-%type <treeNode> typeSpecifier returnTypeSpecifier funDeclaration
-%type <treeNode> params paramList paramTypeList paramIdList paramId
-%type <treeNode> statement matched unmatched iterationHeader otherStmt
-%type <treeNode> compoundStmt localDeclarations statementList 
-%type <treeNode> expressionStmt returnStmt breakStmt expression
-%type <treeNode> simpleExpression andExpression unaryRelExpression
-%type <treeNode> relExpression relop sumExpression sumop term mulop
-%type <treeNode> unaryExpression unaryop factor mutable immutable call
-%type <treeNode> args argList constant
+%type program declarationList declaration recDeclaration
+%type varDeclaration scopedVarDeclaration varDeclList
+%type varDeclInitialize varDeclId scopedTypeSpecifier
+%type typeSpecifier returnTypeSpecifier funDeclaration
+%type params paramList paramTypeList paramIdList paramId
+%type statement matched unmatched iterationHeader otherStmt
+%type compoundStmt localDeclarations statementList 
+%type expressionStmt returnStmt breakStmt expression
+%type simpleExpression andExpression unaryRelExpression
+%type relExpression relop sumExpression sumop term mulop
+%type unaryExpression unaryop factor mutable immutable call
+%type args argList constant
 
 
 //Grammar starting point
@@ -124,13 +124,13 @@ declarationList:
                ;
 
 declaration:
-           varDeclaration
-           | funDeclaration
-           | recDeclaration
+        	varDeclaration { $$ = $1; }
+        	| funDeclaration { $$ = $1; }
+        	| recDeclaration { $$ = $1; }
            ;
 
 recDeclaration:
-              RECORD RECTYPE LCB localDeclarations RCB
+              RECORD RECTYPE LCB localDeclarations RCB {}
               ;
 
 varDeclaration:
@@ -169,7 +169,7 @@ varDeclId:
 
 scopedTypeSpecifier:
                    STATIC typeSpecifier 
-                   | typeSpecifier
+                   | typeSpecifier {$$ = $1;}
                    ;
 
 typeSpecifier:
@@ -200,22 +200,22 @@ funDeclaration:
               ;
 
 params:
-      paramList {;}
-      | %empty {;}
+      paramList {$$ = $1;}
+      | %empty {$$ = NULL;}
       ;
 
 paramList:
          paramList SCOLON paramTypeList 
-         | paramTypeList
+         | paramTypeList {$$ = $1;}
          ;
 
 paramTypeList:
-             typeSpecifier paramIdList
+             typeSpecifier paramIdList {$$ = $1;}
              ;
 
 paramIdList:
            paramIdList COMMA paramId 
-           | paramId
+           | paramId {$$ = $1;}
            ;
 
 paramId:
@@ -224,21 +224,21 @@ paramId:
        ;
 
 statement:
-        matched
-        | unmatched
+        matched {$$ = $1;}
+        | unmatched {$$ = $1;}
         ;
 
 matched:
-        IF LPAREN simpleExpression RPAREN matched ELSE matched 
-        | iterationHeader matched
-        | otherStmt
+        IF LPAREN simpleExpression RPAREN matched ELSE matched {}
+        | iterationHeader matched {$$ = $1;}
+        | otherStmt {$$ = $1;}
         ;
 
 unmatched:
          IF LPAREN simpleExpression RPAREN matched
          | IF LPAREN simpleExpression RPAREN unmatched 
          | IF LPAREN simpleExpression RPAREN matched ELSE unmatched 
-         | iterationHeader unmatched
+         | iterationHeader {$$ = $1;}
         ;
 
 iterationHeader: 
@@ -246,10 +246,10 @@ iterationHeader:
         ;
 
 otherStmt:
-         expressionStmt 
-         | compoundStmt 
-         | returnStmt
-         | breakStmt
+         expressionStmt {$$ = $1;}
+         | compoundStmt {$$ = $1;}
+         | returnStmt {$$ = $1;}
+         | breakStmt {$$ = $1;}
          ;
 
 compoundStmt:
@@ -257,13 +257,13 @@ compoundStmt:
             ;
 
 localDeclarations:
-             localDeclarations scopedVarDeclaration 
-             | %empty
+             localDeclarations scopedVarDeclaration {$$ = $1;} 
+             | %empty {$$ = NULL;}
              ;
 
 statementList:
-             statementList statement 
-             | %empty
+             statementList statement {$$ = $1;}
+             | %empty {$$ = NULL;}
              ;
 
 expressionStmt:
@@ -337,22 +337,22 @@ expression:
 
 simpleExpression:
 	simpleExpression OR andExpression
-	| andExpression
+	| andExpression {$$ = $1;}
 	;
 
 andExpression: 
 	andExpression AND unaryRelExpression 
-	| unaryRelExpression 
+	| unaryRelExpression {$$ = $1;}
 	;
 
 unaryRelExpression:
 	NOT unaryRelExpression  
-	| relExpression 
+	| relExpression {$$ = $1;}
 	;
 
 relExpression:
 	sumExpression relop sumExpression 
-	| sumExpression  
+	| sumExpression {$$ = $1;}
     ;
 
 relop:
@@ -385,8 +385,8 @@ relop:
 	;
 
 sumExpression:
-	sumExpression sumop term 
-	| term 
+	sumExpression sumop term {$$ = $1;}
+	| term {$$ = $1;}
 	;
 
 sumop:
@@ -403,8 +403,8 @@ sumop:
 	;
 
 term:
-	term mulop unaryExpression
-	| unaryExpression
+	term mulop unaryExpression {$$ = $1;}
+	| unaryExpression {$$ = $1;}
 	;
 
 mulop:
@@ -428,8 +428,8 @@ mulop:
 	;
 
 unaryExpression:
-	unaryop unaryExpression
-	| factor
+	unaryop unaryExpression {$$ = $1;}
+	| factor {$$ = $1;}
 	;
 
 unaryop:
@@ -451,8 +451,8 @@ unaryop:
 	;
 
 factor:
-	immutable
-	| mutable
+	immutable {$$ = $1;}
+	| mutable {$$ = $1;}
 	;
 
 mutable:
@@ -464,8 +464,8 @@ mutable:
 
 immutable:
 	LPAREN expression RPAREN
-	| call
-	| constant
+	| call {$$ = $1;}
+	| constant {$$ = $1;}
 	;
 
 call:
@@ -473,13 +473,13 @@ call:
 	;
 
 args:
-	argList
-	| %empty
+	argList {$$ = $1;}
+	| %empty {$$ = NULL;}
 	;
 
 argList: 
 	argList COMMA expression
-	| expression
+	| expression {$$ = $1;}
 	;
 
 constant:
