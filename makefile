@@ -49,15 +49,15 @@ BFLAGS = -v -t -d
 
 #To create executable, ensure OBJECT & SOURCE files exist first, then run command
 $(BIN): $(OBJS)
-    $(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(BIN)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(BIN)
 
 #To create bison files, ensure parser files exist
 $(BASE).tab.h $(BASE).tab.c: $(BASE).y
-    bison $(BFLAGS) $(BASE).y
+	bison $(BFLAGS) $(BASE).y
 
 #To create flex file, ensure flex and bison header exist first
 lex.yy.c: $(BASE).l $(BASE).tab.h
-    flex $(FFLAGS) $(BASE).l
+	flex $(FFLAGS) $(BASE).l
 
 
 
