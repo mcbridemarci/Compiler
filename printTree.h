@@ -104,7 +104,33 @@ typedef enum {
 * period -   .
 * colon -    :
 */
-typedef enum {} OpKind;
+typedef enum {
+    PLUS,
+    INC,
+    DASH,
+    DEC,
+    ASSIGN,
+    ADDASS,
+    SUBASS,
+    MULASS,
+    DIVASS,
+    ASTERISK,
+    FSLASH,
+    NOT,
+    AND,
+    OR,
+    EQ,
+    NOTEQ,
+    LESSEQ,
+    LTHAN,
+    GRTEQ,
+    GTHAN,
+    RANDOM,
+    MOD,
+    LSQB,
+    PERIOD,
+    COLON
+} OpKind;
 
 /*
 * Structure to hold AST node properties
