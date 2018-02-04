@@ -46,18 +46,18 @@ void yyerror(const char* s);
 %token <token> MOD PERIOD LCB RCB
 
 //Types for nonterminals
-%type program declarationList declaration recDeclaration
-%type varDeclaration scopedVarDeclaration varDeclList
-%type varDeclInitialize varDeclId scopedTypeSpecifier
-%type typeSpecifier returnTypeSpecifier funDeclaration
-%type params paramList paramTypeList paramIdList paramId
-%type statement matched unmatched iterationHeader otherStmt
-%type compoundStmt localDeclarations statementList 
-%type expressionStmt returnStmt breakStmt expression
-%type simpleExpression andExpression unaryRelExpression
-%type relExpression relop sumExpression sumop term mulop
-%type unaryExpression unaryop factor mutable immutable call
-%type args argList constant
+%type <token> program declarationList declaration recDeclaration
+%type <token> varDeclaration scopedVarDeclaration varDeclList
+%type <token> varDeclInitialize varDeclId scopedTypeSpecifier
+%type <token> typeSpecifier returnTypeSpecifier funDeclaration
+%type <token> params paramList paramTypeList paramIdList paramId
+%type <token> statement matched unmatched iterationHeader otherStmt
+%type <token> compoundStmt localDeclarations statementList 
+%type <token> expressionStmt returnStmt breakStmt expression
+%type <token> simpleExpression andExpression unaryRelExpression
+%type <token> relExpression relop sumExpression sumop term mulop
+%type <token> unaryExpression unaryop factor mutable immutable call
+%type <token> args argList constant
 
 
 //Grammar starting point
