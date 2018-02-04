@@ -249,7 +249,7 @@ breakStmt:
 
 expression:
     	mutable ASSIGN expression {
-		TreeNode* t = newExpNode(AssignK);
+		TreeNode* t = newExpNode(OpK);
 		t->child[0] = $1;
 		t->child[1] = $3;
 		t->attr.op = ASSIGN;
