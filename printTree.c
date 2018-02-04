@@ -58,10 +58,11 @@ TreeNode* newStmtNode(StmtKind kind) {
 	t->isStatic = 0;
 	t->isParam = 0;
 	t->isFunc = 0;
-
+	/*
 	t->size = 0;
 	t->offset = 0;
 	t->ref = 0;
+	*/
 
 	//Set return type to default
 	t->expType = VoidT;
@@ -101,10 +102,11 @@ TreeNode* newExpNode(ExpKind kind) {
 	t->isStatic = 0;
 	t->isParam = 0;
 	t->isFunc = 0;
-
+	/*
 	t->size = 0;
 	t->offset = 0;
 	t->ref = 0;
+	*/
 
 	//Set return type to default
 	t->expType = VoidT;
@@ -145,10 +147,11 @@ TreeNode* newDeclNode(DeclKind kind) {
 	t->isStatic = 0;
 	t->isParam = 0;
 	t->isFunc = 0;
-
+	/*
 	t->size = 0;
 	t->offset = 0;
 	t->ref = 0;
+	*/
 
 	//Set return type to default
 	t->expType = VoidT;
