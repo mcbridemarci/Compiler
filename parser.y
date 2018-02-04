@@ -46,16 +46,24 @@ void yyerror(const char* s);
 %token <token> MOD PERIOD LCB RCB
 
 //Types for nonterminals
-%type <treeNode> program declarationList ...
+%type <treeNode> program declarationList declaration recDeclaration
+%type <treeNode> varDeclaration scopedVarDeclaration varDeclList
+%type <treeNode> varDeclInitialize varDeclId scopedTypeSpecifier
+%type <treeNode> typeSpecifier returnTypeSpecifier funDeclaration
+%type <treeNode> params paramList paramTypeList paramIdList paramId
+%type <treeNode> statement matched unmatched iterationHeader otherStmt
+%type <treeNode> compoundStmt localDeclarations statementList 
+%type <treeNode> expressionStmt returnStmt breakStmt expression
+%type <treeNode> simpleExpression andExpression unaryRelExpression
+%type <treeNode> relExpression relop sumExpression sumop term mulop
+%type <treeNode> unaryExpression unaryop factor mutable immutable call
+%type <treeNode> args argList constant
 
 
 //Grammar starting point
 %start program
 
 %%
-program:
-	declarationList { syntaxTree = $1; }
-	;
 
 declarationList:
 	declarationList declaration
@@ -107,7 +115,7 @@ constant:
 //OUR STUFF
 //TODO REMOVE STUFF ABOVE/INTEGRATE IT
 program:
-       declarationList
+       declarationList { syntaxTree = $1; }
        ;
 
 declarationList:
@@ -165,8 +173,7 @@ scopedTypeSpecifier:
                    ;
 
 typeSpecifier:
-             returnTypeSpecifier {
-		varType = $1;
+        returnTypeSpecifier {
 		}
              | RECTYPE  {
 		TreeNode* t = newDeclNode(RecK);
@@ -177,13 +184,13 @@ typeSpecifier:
 
 returnTypeSpecifier:
                    INT {
-			$$ = NumT;
+			varType = (int) NumT;
 			}
                    | BOOL {
-			$$ = BoolT;
+			varType = (int) BoolT;
 			}
                    | CHAR {
-			$$ = CharT;
+			varType = (int) CharT;
 			}
                    ;
 
@@ -193,8 +200,8 @@ funDeclaration:
               ;
 
 params:
-      paramList
-      | %empty
+      paramList {;}
+      | %empty {;}
       ;
 
 paramList:
