@@ -204,7 +204,7 @@ unmatched:
          IF LPAREN simpleExpression RPAREN matched
          | IF LPAREN simpleExpression RPAREN unmatched 
          | IF LPAREN simpleExpression RPAREN matched ELSE unmatched 
-         | iterationHeader {$$ = $1;}
+         | iterationHeader unmatched {$$ = $1;}
         ;
 
 iterationHeader: 
