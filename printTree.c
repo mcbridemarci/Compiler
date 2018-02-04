@@ -39,7 +39,8 @@ TreeNode* newStmtNode(StmtKind kind) {
 		yyerror("Failure to allocate STMT node\n");
 
 	//Initialize children to NULL
-	for (int i = 0; i<MAXCHILDREN; i++)
+    int i;
+	for (i = 0; i<MAXCHILDREN; i++)
 		t->child[i] = NULL;
 
 	//Initialize next node to NULL
@@ -83,7 +84,8 @@ TreeNode* newExpNode(ExpKind kind) {
 		yyerror("Failure to allocate STMT node\n");
 
 	//Initialize children to NULL
-	for (int i = 0; i<MAXCHILDREN; i++)
+    int i;
+	for (i = 0; i<MAXCHILDREN; i++)
 		t->child[i] = NULL;
 
 	//Initialize next node to NULL
@@ -128,7 +130,8 @@ TreeNode* newDeclNode(DeclKind kind) {
 		yyerror("Failure to allocate STMT node\n");
 
 	//Initialize children to NULL
-	for (int i = 0; i<MAXCHILDREN; i++)
+    int i;
+	for (i = 0; i<MAXCHILDREN; i++)
 		t->child[i] = NULL;
 
 	//Initialize next node to NULL
@@ -299,8 +302,9 @@ void printTree(TreeNode* tree) {
 		else
 			yyerror("Unknown node");
 
-//Print kids after we finish
-		for (int i = 0; i < MAXCHILDREN; i++)
+        //Print kids after we finish
+        int i;
+		for (i = 0; i < MAXCHILDREN; i++)
 		{
 			if(tree->child[i] != NULL)
 			{
