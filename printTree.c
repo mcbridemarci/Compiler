@@ -162,55 +162,55 @@ TreeNode* newDeclNode(DeclKind kind) {
 void printOp(TokenType token) {
     
     switch (token) {
-        case PLUS: 
+        case Plus: 
             printf("Op: + "); break;
-        case INC:
+        case Inc:
             printf("Op: ++ "); break;
-        case DASH:
+        case Dash:
             printf("Op: - "); break;
-        case DEC:
+        case Dec:
             printf("Op: -- "); break;
-        case ASSIGN:
+        case Assign:
             printf("Assign: = "); 
-        case ADDASS:
+        case Addass:
             printf("Op: += "); break;
-        case SUBASS:
+        case Subass:
             printf("Op: -= "); break;
-        case MULASS:
+        case Mulass:
             printf("Op: *= "); break;
-        case DIVASS:
+        case Divass:
             printf("Op: /= "); break;
-        case ASTERISK:
+        case Asterisk:
             printf("Op: * "); break;
-        case FSLASH:
+        case Fslash:
             printf("Op: / "); break;
-        case NOT:
+        case Not:
             printf("Op: not "); break;
-        case AND:
+        case And:
             printf("Op: and "); break;
-        case OR:
+        case Or:
             printf("Op: or "); break;
-        case EQ:
+        case Eq:
             printf("Op: == "); break;
-        case NOTEQ:
+        case Noteq:
             printf("Op: != "); break;
-        case LESSEQ:
+        case Lesseq:
             printf("Op: <= "); break;
-        case LTHAN:
+        case Lthan:
             printf("Op: < "); break;
-        case GRTEQ:
+        case Grteq:
             printf("Op: >= "); break;
-        case GTHAN:
+        case Gthan:
             printf("Op: > "); break;
-        case RANDOM:
+        case Random:
             printf("Op: ? "); break;
-        case MOD:
+        case Mod:
             printf("Op: % "); break;
-        case LSQB:
+        case Lsqb:
             printf("Op: [ "); break;
-        case PERIOD:
+        case Period:
             printf("Op: . "); break;
-        case COLON:
+        case Colon:
             printf("Op: : "); break;
         default: /* should never happen */
             printf("Unknown token %d\n", token);
