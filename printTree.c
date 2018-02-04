@@ -12,9 +12,16 @@ extern int line_num;
 /*
 * Track indentation level for AST printing?
 */
-#define TAB tab=2
-#define UNTAB untab-=2
-static level=0; 
+static format = 0;
+#define TAB format=2
+#define UNTAB format-=2
+
+static void spacing(void)
+{
+  int i;
+  for (i=0; i<format; i++)
+    printf("!\t");
+}
 
 //Reference parser error function
 void yyerror(const char* s);
@@ -218,6 +225,8 @@ void printTree(FILE* output, TreeNode* tree) {
 	//Check if we exist before printing
 	while (tree != NULL)
 	{
+    TAB
+    spacing();
 		//Statement node printing
 		if (tree->nodekind == StmtK)
 		{
@@ -294,8 +303,8 @@ void printTree(FILE* output, TreeNode* tree) {
 			{
 				printTree(tree->child[i]);
 			}
-
-			//...waht if child0 doesnt exist, but other children do tho?
+      else
+        tree->child[0] = NULL
 		}
 
 		//Point to the next node in the AST
@@ -306,4 +315,3 @@ void printTree(FILE* output, TreeNode* tree) {
 
 	return;
 }
-//END printTREE
