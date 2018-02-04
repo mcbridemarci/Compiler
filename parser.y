@@ -23,7 +23,7 @@ extern int yydebug;
 //Main AST to parse into
 static TreeNode* syntaxTree;
 
-int varType = VoidT;	//what types of variables do we have?
+int varType = VoidT; //TODO: how to deal with types, is this correct?
 
 //Reference parser error function
 void yyerror(const char* s);
