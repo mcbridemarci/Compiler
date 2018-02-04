@@ -236,22 +236,22 @@ void printTree(TreeNode* tree) {
 			switch (tree->kind.stmt)
 			{
        case IfK:
-        prinf("If [line: %d]\n", tree->lineno);
+        printf("If [line: %d]\n", tree->lineno);
         break;
        case WhileK:
-        prinf("While [line: %d]\n", tree->lineno);
+        printf("While [line: %d]\n", tree->lineno);
         break;
        case ReturnK:
-        prinf("Return [line: %d]\n", tree->lineno);
+        printf("Return [line: %d]\n", tree->lineno);
         break;
        case BreakK:
-        prinf("Break [line: %d]\n", tree->lineno);
+        printf("Break [line: %d]\n", tree->lineno);
         break;
        case CompoundK:
-        prinf("Compound [line: %d]\n", tree->lineno);
+        printf("Compound [line: %d]\n", tree->lineno);
         break;
        default: 
-        prinf("Whoops, unrecognized expression.\n");
+        printf("Whoops, unrecognized expression.\n");
         break;
 			}
 		}
@@ -271,7 +271,7 @@ void printTree(TreeNode* tree) {
           printf("Id: %s [line: %d]\n", tree->attr.name, tree->lineno);
           break;
         default: 
-          prinf("Whoops, unrecognized expression.\n");
+          printf("Whoops, unrecognized expression.\n");
           break;
 			}
 		}
@@ -282,7 +282,7 @@ void printTree(TreeNode* tree) {
 			switch (tree->kind.decl)
 			{
         case VarK:
-          prinf("Var %s of type %s [line: %d]\n", tree->attr.name, tree->expType, tree->lineno);
+          printf("Var %s of type %s [line: %d]\n", tree->attr.name, tree->expType, tree->lineno);
           break;
         case FuncK:
           printf("Func %s returns type %s [line: %d]\n", tree->attr.name, tree->expType, tree->lineno);
@@ -291,7 +291,7 @@ void printTree(TreeNode* tree) {
           printf("Return [line: %d]\n", tree->lineno);
           break;
         default: 
-          prinf("Whoops, unrecognized declaration.\n");
+          printf("Whoops, unrecognized declaration.\n");
           break;
 			}
 		}
