@@ -3,6 +3,7 @@
 
 #define MAXCHILDREN 3
 
+#include "scanType.h"
 /*
 * Main kind of Tree Node
 *
