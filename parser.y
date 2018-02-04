@@ -331,28 +331,33 @@ relop:
 		TreeNode* t = newExpNode(ConstK);
 		t->attr.op = LESSEQ;
 		$$ = t;
-        	} 
+        } 
 	| GRTEQ {
 		TreeNode* t = newExpNode(ConstK);
 		t->attr.op = GRTEQ;
 		$$ = t;
-        	} 
+        } 
 	| GTHAN {
 		TreeNode* t = newExpNode(ConstK);
 		t->attr.op = GTHAN;
 		$$ = t;
-        	} 
+        } 
 	| LTHAN {
 		TreeNode* t = newExpNode(ConstK);
 		t->attr.op = LTHAN;
 		$$ = t;
-        	} 
+        } 
 
 	| EQ {
 		TreeNode* t = newExpNode(ConstK);
 		t->attr.op = EQ;
 		$$ = t;
-        	} 
+        } 
+    | NOTEQ { 
+        TreeNode* t = newExpNode(ConstK);
+        t->attr.op = NOTEQ;
+        $$ = t;
+        }
 	;
 
 sumExpression:
