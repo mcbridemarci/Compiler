@@ -219,7 +219,12 @@ otherStmt:
          ;
 
 compoundStmt:
-            LCB localDeclarations statementList RCB
+            LCB localDeclarations statementList RCB {
+                TreeNode* t = newStmtNode(CompoundK);
+        		t->child[0] = $2;
+        		t->child[1] = $3;
+        		$$ = t;
+    		    }
             ;
 
 localDeclarations:
