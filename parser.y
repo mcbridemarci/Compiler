@@ -1,6 +1,5 @@
 %{
 #define YYPARSER
-#define YYDEBUG 0
 
 //System library import
 #include<stdio.h>
