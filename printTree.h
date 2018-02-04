@@ -68,7 +68,12 @@ typedef enum {
 * True/False
 * Single character
 */
-typedef enum {} ExpType;
+typedef enum {
+    VoidT,
+    NumT,
+    BoolT,
+    CharT
+} ExpType;
 
 /*
 * Operation token
@@ -146,6 +151,7 @@ typedef struct TreeNode {
 		OpKind op;
 		int value;
 		unsigned char cvalue;
+		char* string;	//for IDs?
 		char* name;
 	} attr;
 
@@ -196,6 +202,12 @@ TreeNode* newExpNode(ExpKind);
 * Allocate new Statement node
 */
 TreeNode* newStmtNode(StmtKind);
+
+/*
+* Print the given token
+*/
+void printToken(TokenType token);
+
 
 #endif
 
