@@ -68,7 +68,12 @@ typedef enum {
 * True/False
 * Single character
 */
-typedef enum {} ExpType;
+typedef enum {
+    VoidT,
+    NumT,
+    BoolT,
+    CharT
+} ExpType;
 
 /*
 * Operation token
