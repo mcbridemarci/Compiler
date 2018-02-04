@@ -223,19 +223,19 @@ void printOp(TokenClass token) {
 /*
 * Print the AST
 */
-void printTree(FILE* output, TreeNode* tree) {
+void printTree(TreeNode* tree) {
  
 	//Check if we exist before printing
 	while (tree != NULL)
 	{
-    TAB
+    TAB;
     spacing();
 		//Statement node printing
 		if (tree->nodekind == StmtK)
 		{
 			switch (tree->kind.stmt)
 			{
-       case Ifk:
+       case IfK:
         prinf("If [line: %d]\n", lineno);
         break;
        case WhileK:
@@ -282,7 +282,7 @@ void printTree(FILE* output, TreeNode* tree) {
 			switch (tree->kind.decl)
 			{
         case VarK:
-          prinf("Var %s of type %s [line: %d]\n", tree->attr.name, expType, lineno);
+          prinf("Var %s of type %s [line: %d]\n", tree->attr.name, expType, linen:o);
           break;
         case FuncK:
           printf("Func %s returns type %s [line: %d]\n", tree->attr.name, expType, lineno);
@@ -307,7 +307,7 @@ void printTree(FILE* output, TreeNode* tree) {
 				printTree(tree->child[i]);
 			}
       else
-        tree->child[0] = NULL
+        tree->child[0] = NULL;
 		}
 
 		//Point to the next node in the AST

@@ -213,7 +213,7 @@ typedef struct TreeNode {
 /*
 * Print the AST
 */
-void printTree(FILE* out, TreeNode* tree);
+void printTree(TreeNode* tree);
 
 /*
 * Allocate new Declaration node
