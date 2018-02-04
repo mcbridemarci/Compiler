@@ -98,6 +98,12 @@ constant:
 	}
 	;
 
+
+
+
+
+//OUR STUFF
+//TODO REMOVE STUFF ABOVE/INTEGRATE IT
 program:
        declarationList
        ;
@@ -136,8 +142,14 @@ varDeclInitialize:
                  ;
 
 varDeclId:
-         ID 
-         | ID LSQB NUMCONST RSQB
+         ID {
+		TreeNode* t = newDeclNode(ConstK);
+		t->child[0] = $1;
+		t->child[1] = $3;
+		t->attr.op = MULASS;
+		$$ = t;	
+		}
+         | ID LSQB NUMCONST RSQB {}
          ;
 
 scopedTypeSpecifier:
@@ -244,62 +256,56 @@ breakStmt:
 
 
 expression:
-    mutable ASSIGN {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-        t->nodekind = EXP;
-		t->kind.exp = OPK;
-        t->attr.op = ASSIGN;
+    	mutable ASSIGN expression {
+		TreeNode* t = newExpNode(AssignK);
+		t->child[0] = $1;
+		t->child[1] = $3;
+		t->attr.op = ASSIGN;
 		$$ = t;
-        } expression 
-	| mutable ADDASS {
+		}
+
+	| mutable ADDASS expression {
 		TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-        t->nodekind = EXP;
-		t->kind.exp = OPK;
-        t->attr.op = ADDASS;
+		t->child[0] = $1;
+		t->child[1] = $3;
+		t->attr.op = ADDASS;
 		$$ = t;
-        } expression
-	| mutable SUBASS {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-        t->nodekind = EXP;
-		t->kind.exp = OPK;
-        t->attr.op = ASSIGN;
+		}
+
+	| mutable SUBASS expression {
+		TreeNode* t = newExpNode(ConstK);
+		t->child[0] = $1;
+		t->child[1] = $3;
+		t->attr.op = SUBASS;
 		$$ = t;
-        } expression
-	| mutable MULASS {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		
-        //t->kind = ;
-        t->attr.op = $2;
+        	}
+
+	| mutable MULASS expression {
+		TreeNode* t = newExpNode(ConstK);
+		t->child[0] = $1;
+		t->child[1] = $3;
+		t->attr.op = MULASS;
 		$$ = t;
-        } expression
-	| mutable DIVASS {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		
-        //t->kind = ;
-        t->attr.op = $2;
+        	} 
+	| mutable DIVASS expression {
+		TreeNode* t = newExpNode(ConstK);
+		t->child[0] = $1;
+		t->child[1] = $3;
+		t->attr.op = DIVASS;
 		$$ = t;
-        } expression
+        	} 
 	| mutable INC {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		
-        //t->kind = ;
-        t->attr.op = $2;
+		TreeNode* t = newExpNode(ConstK);
+		t->child[0] = $1;
+		t->attr.op = INC;
 		$$ = t;
-        }
+        	} 
 	| mutable DEC {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		
-        //t->kind = ;
-        t->attr.op = $2;
+		TreeNode* t = newExpNode(ConstK);
+		t->child[0] = $1;
+		t->attr.op = DEC;
 		$$ = t;
-        }
+        	} 
 	| simpleExpression
 	;
 
@@ -324,30 +330,32 @@ relExpression:
     ;
 
 relop:
-    LESSEQ 
-	| GRTEQ 
+    	LESSEQ {
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = LESSEQ;
+		$$ = t;
+        	} 
+	| GRTEQ {
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = GRTEQ;
+		$$ = t;
+        	} 
 	| GTHAN {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = GTHAN;
 		$$ = t;
-        }
+        	} 
 	| LTHAN {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = LTHAN;
 		$$ = t;
-        }
+        	} 
 
 	| EQ {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = EQ;
 		$$ = t;
-        }
+        	} 
 	;
 
 sumExpression:
@@ -357,19 +365,15 @@ sumExpression:
 
 sumop:
 	PLUS { 
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = PLUS;
 		$$ = t;
-        }
+        	}
 	| DASH {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = DASH;
 		$$ = t;
-        }
+        	}
 	;
 
 term:
@@ -379,28 +383,22 @@ term:
 
 mulop:
 	ASTERISK {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = ASTERISK;
 		$$ = t;
-        }
+        	}
 
 	| FSLASH {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = FSLASH;
 		$$ = t;
-        }
+        	}
 
 	| MOD {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = MOD;
 		$$ = t;
-        }
+        	}
 	;
 
 unaryExpression:
@@ -410,24 +408,18 @@ unaryExpression:
 
 unaryop:
 	DASH {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = DASH;
 		$$ = t;
-        }
+        	}
 	| ASTERISK  {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = ASTERISK;
 		$$ = t;
-        }
+        	}
 	| RANDOM {
-        TreeNode* t = newExpNode(ConstK);
-        t->lineno = linenum;
-		//t->kind = ;
-        t->attr.op = $1;
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.op = RANDOM;
 		$$ = t;
         }
 	;
@@ -465,10 +457,25 @@ argList:
 	;
 
 constant:
-	NUMCONST
-	| CHARCONST
-    | BOOLCONST
-    ;
+	NUMCONST {
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.value = $1;
+		t->expType = NumT;
+		$$ = t;
+		}
+	| CHARCONST {
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.cvalue = $1;
+		t->expType = CharT;
+		$$ = t;
+		}
+    	| BOOLCONST {
+		TreeNode* t = newExpNode(ConstK);
+		t->attr.value = $1;
+		t->expType = BoolT;
+		$$ = t;
+		}
+    	;
 
 	/*| TRUE
 	| FALSE*/
