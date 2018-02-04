@@ -167,7 +167,7 @@ funDeclaration:
 
 params:
       paramList {$$ = $1;}
-      | %empty {$$ = NULL;}
+      | %empty {;}
       ;
 
 paramList:
