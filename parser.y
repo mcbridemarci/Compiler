@@ -36,15 +36,19 @@ void yyerror(const char* s);
 	struct TreeNode* treeNode;
     char *str;
     int num;
+    char c;
 }
 
-//Associate token types with union fields
-%token <treeNode> ID NUMCONST CHARCONST RECTYPE BOOLCONST RECORD
+//Associate token types with union fields, terminal symbol AKA token type
+%token <treeNode> RECTYPE BOOLCONST RECORD
 %token <treeNode> STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK OR AND NOT
 %token <treeNode> EQ NOTEQ MULASS INC ADDASS DEC SUBASS DIVASS LESSEQ GRTEQ
 %token <treeNode> ASTERISK RANDOM DASH FSLASH LPAREN RPAREN PLUS COMMA
 %token <treeNode> LSQB RSQB COLON SCOLON LTHAN ASSIGN GTHAN
 %token <treeNode> MOD PERIOD LCB RCB
+%token <str> ID
+%token <num> NUMCONST
+%token <c> CHARCONST
 
 //Types for nonterminals
 %type <treeNode> program declarationList declaration recDeclaration
@@ -105,8 +109,8 @@ varDeclaration:
               ;
 
 scopedVarDeclaration:
-                    scopedTypeSpecifier varDeclList SCOLON
-                    ;
+            scopedTypeSpecifier varDeclList SCOLON
+            ;
 
 varDeclList:
            varDeclList COMMA varDeclInitialize 
@@ -114,57 +118,57 @@ varDeclList:
            ;
 
 varDeclInitialize:
-                 varDeclId 
-                 | varDeclId COLON simpleExpression
-                 ;
+            varDeclId 
+            | varDeclId COLON simpleExpression
+            ;
 
 varDeclId:
-         ID {
- 		printf("var dec id %s\n", $1);
-		TreeNode* t = newDeclNode(VarK);
-		t->attr.string = $<str>1;
-		t->expType = varType;
-		$$ = t;
+        ID {
+ 		    printf("var dec id %s\n", $1);
+		    TreeNode* t = newDeclNode(VarK);
+		    t->attr.string = $1;
+		    t->expType = varType;
+		    $$ = t;
 		}
-         | ID LSQB NUMCONST RSQB {
-		TreeNode* t = newDeclNode(VarK);
-		t->attr.string = $<str>1;
-		t->expType = varType;
-		t->isArray = 1;
-		$$ = t;
+        | ID LSQB NUMCONST RSQB {
+		    TreeNode* t = newDeclNode(VarK);
+		    t->attr.string = $1;
+		    t->expType = varType;
+		    t->isArray = 1;
+		    $$ = t;
 		}
-         ;
+        ;
 
 scopedTypeSpecifier:
-                   STATIC typeSpecifier 
-                   | typeSpecifier {$$ = $1;}
-                   ;
+        STATIC typeSpecifier 
+        | typeSpecifier {$$ = $1;}
+        ;
 
 typeSpecifier:
         returnTypeSpecifier {
 		}
-             | RECTYPE  {
-		TreeNode* t = newDeclNode(RecK);
-		t->recType = $<str>1;
-		$$ = t;
+        | RECTYPE  {
+		    TreeNode* t = newDeclNode(RecK);
+		    t->recType = $1;
+		    $$ = t;
 		}
-             ;
+        ;
 
 returnTypeSpecifier:
-                   INT {
-			varType = (int) NumT;
+            INT {
+			    varType = (int) NumT;
 			}
-                   | BOOL {
-			varType = (int) BoolT;
+            | BOOL {
+			    varType = (int) BoolT;
 			}
-                   | CHAR {
-			varType = (int) CharT;
+            | CHAR {
+			    varType = (int) CharT;
 			}
-                   ;
+            ;
 
 funDeclaration:
               typeSpecifier ID LPAREN params RPAREN statement
-              | ID LPAREN params RPAREN statement
+              | ID LPAREN params RPAREN statement {;}
               ;
 
 params:
@@ -187,8 +191,8 @@ paramIdList:
            ;
 
 paramId:
-       ID 
-       | ID LSQB RSQB
+       ID {;}
+       | ID LSQB RSQB {;}
        ;
 
 statement:
@@ -434,7 +438,7 @@ factor:
 	;
 
 mutable:
-	ID 
+	ID {;}
 	| mutable LSQB expression RSQB
 	| mutable PERIOD ID
 	| LSQB expression RSQB
@@ -447,7 +451,7 @@ immutable:
 	;
 
 call:
-	ID LPAREN args RPAREN
+	ID LPAREN args RPAREN {;}
 	;
 
 args:
