@@ -34,6 +34,8 @@ void yyerror(const char* s);
 %union {
 	Token token;
 	struct TreeNode* treeNode;
+    char *str;
+    int num;
 }
 
 //Associate token types with union fields
@@ -120,13 +122,13 @@ varDeclId:
          ID {
  		printf("var dec id %s\n", $1);
 		TreeNode* t = newDeclNode(VarK);
-		t->attr.string = $1;
+		t->attr.string = $<str>1;
 		t->expType = varType;
 		$$ = t;
 		}
          | ID LSQB NUMCONST RSQB {
 		TreeNode* t = newDeclNode(VarK);
-		t->attr.string = $1;
+		t->attr.string = $<str>1;
 		t->expType = varType;
 		t->isArray = 1;
 		$$ = t;
@@ -143,7 +145,7 @@ typeSpecifier:
 		}
              | RECTYPE  {
 		TreeNode* t = newDeclNode(RecK);
-		t->recType = $1;
+		t->recType = $<str>1;
 		$$ = t;
 		}
              ;
@@ -461,19 +463,19 @@ argList:
 constant:
 	NUMCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.value = $1;
+		t->attr.value = $<num>1;
 		t->expType = NumT;
 		$$ = t;
 		}
 	| CHARCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.cvalue = $1;
+		t->attr.cvalue = $1; //TODO: change to ... = $<type>1
 		t->expType = CharT;
 		$$ = t;
 		}
     	| BOOLCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.value = $1;
+		t->attr.value = $1; //TODO: change to ... = $<type>1
 		t->expType = BoolT;
 		$$ = t;
 		}
