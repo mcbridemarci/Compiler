@@ -40,15 +40,12 @@ void yyerror(const char* s);
 }
 
 //Associate token types with union fields, terminal symbol AKA token type
-%token <treeNode> RECTYPE BOOLCONST RECORD
-%token <treeNode> STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK OR AND NOT
-%token <treeNode> EQ NOTEQ MULASS INC ADDASS DEC SUBASS DIVASS LESSEQ GRTEQ
-%token <treeNode> ASTERISK RANDOM DASH FSLASH LPAREN RPAREN PLUS COMMA
-%token <treeNode> LSQB RSQB COLON SCOLON LTHAN ASSIGN GTHAN
-%token <treeNode> MOD PERIOD LCB RCB
-%token <str> ID
-%token <num> NUMCONST
-%token <c> CHARCONST
+%token <token> ID NUMCONST CHARCONST RECTYPE BOOLCONST RECORD
+%token <token> STATIC INT BOOL CHAR IF ELSE WHILE RETURN BREAK OR AND NOT
+%token <token> EQ NOTEQ MULASS INC ADDASS DEC SUBASS DIVASS LESSEQ GRTEQ
+%token <token> ASTERISK RANDOM DASH FSLASH LPAREN RPAREN PLUS COMMA
+%token <token> LSQB RSQB COLON SCOLON LTHAN ASSIGN GTHAN
+%token <token> MOD PERIOD LCB RCB
 
 //Types for nonterminals
 %type <treeNode> program declarationList declaration recDeclaration
@@ -126,13 +123,13 @@ varDeclId:
         ID {
  		    printf("var dec id %s\n", $1);
 		    TreeNode* t = newDeclNode(VarK);
-		    t->attr.string = $1;
+		    t->attr.string = $1.string;
 		    t->expType = varType;
 		    $$ = t;
 		}
         | ID LSQB NUMCONST RSQB {
 		    TreeNode* t = newDeclNode(VarK);
-		    t->attr.string = $1;
+		    t->attr.string = $1.string;
 		    t->expType = varType;
 		    t->isArray = 1;
 		    $$ = t;
@@ -140,7 +137,7 @@ varDeclId:
         ;
 
 scopedTypeSpecifier:
-        STATIC typeSpecifier 
+        STATIC typeSpecifier {;}
         | typeSpecifier {$$ = $1;}
         ;
 
@@ -149,7 +146,7 @@ typeSpecifier:
 		}
         | RECTYPE  {
 		    TreeNode* t = newDeclNode(RecK);
-		    t->recType = $1;
+		    t->recType = $1.string;
 		    $$ = t;
 		}
         ;
@@ -207,14 +204,14 @@ matched:
         ;
 
 unmatched:
-         IF LPAREN simpleExpression RPAREN matched
-         | IF LPAREN simpleExpression RPAREN unmatched 
-         | IF LPAREN simpleExpression RPAREN matched ELSE unmatched 
+         IF LPAREN simpleExpression RPAREN matched {}
+         | IF LPAREN simpleExpression RPAREN unmatched {}
+         | IF LPAREN simpleExpression RPAREN matched ELSE unmatched {}
          | iterationHeader unmatched {$$ = $1;}
         ;
 
 iterationHeader: 
-        WHILE LPAREN simpleExpression RPAREN 
+        WHILE LPAREN simpleExpression RPAREN {}
         ;
 
 otherStmt:
@@ -245,16 +242,16 @@ statementList:
 
 expressionStmt:
               expression SCOLON
-              | SCOLON 
+              | SCOLON {}
               ;
 
 returnStmt:
-	RETURN SCOLON
-	| RETURN expression SCOLON
+	RETURN SCOLON {}
+	| RETURN expression SCOLON {}
 	;
 
 breakStmt:
-	BREAK SCOLON
+	BREAK SCOLON {}
     ;
 
 
@@ -323,7 +320,7 @@ andExpression:
 	;
 
 unaryRelExpression:
-	NOT unaryRelExpression  
+	NOT unaryRelExpression {}
 	| relExpression {$$ = $1;}
 	;
 
@@ -441,11 +438,11 @@ mutable:
 	ID {;}
 	| mutable LSQB expression RSQB
 	| mutable PERIOD ID
-	| LSQB expression RSQB
+	| LSQB expression RSQB {}
 	;
 
 immutable:
-	LPAREN expression RPAREN
+	LPAREN expression RPAREN {}
 	| call {$$ = $1;}
 	| constant {$$ = $1;}
 	;
@@ -467,19 +464,19 @@ argList:
 constant:
 	NUMCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.value = $<num>1;
+		t->attr.value = $1.value;
 		t->expType = NumT;
 		$$ = t;
 		}
 	| CHARCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.cvalue = $1; //TODO: change to ... = $<type>1
+		t->attr.cvalue = $1.letter; //TODO: change to ... = $<type>1
 		t->expType = CharT;
 		$$ = t;
 		}
     	| BOOLCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.value = $1; //TODO: change to ... = $<type>1
+		t->attr.value = $1.value; //TODO: change to ... = $<type>1
 		t->expType = BoolT;
 		$$ = t;
 		}
