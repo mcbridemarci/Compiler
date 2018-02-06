@@ -34,9 +34,6 @@ void yyerror(const char* s);
 %union {
 	Token token;
 	struct TreeNode* treeNode;
-    char *str;
-    int num;
-    char c;
 }
 
 //Associate token types with union fields, terminal symbol AKA token type
@@ -66,8 +63,6 @@ void yyerror(const char* s);
 %start program
 
 %%
-
-//OUR STUFF
 program:
        declarationList { syntaxTree = $1; }
        ;
@@ -88,7 +83,7 @@ declarationList:
             			$$ = $2;
             		}
 	           }
-               | declaration
+               | %empty { $$ = NULL; }
                ;
 
 declaration:
@@ -98,7 +93,17 @@ declaration:
            ;
 
 recDeclaration:
-              RECORD RECTYPE LCB localDeclarations RCB {}
+              RECORD RECTYPE LCB localDeclarations RCB {
+				TreeNode* t = newDeclNode(RecK); 
+				TreeNode* i = t; // point to t 
+				//set flag
+				// record was only declared. Nothing to store in rectype. write to attr.name 
+ 				t->recType = $2.string; // copy the name - TA " the hell is this ?!" dup strings 
+				// set things that are in the union. 
+				// set line number $1.lineno  
+				// child assign if kid != NULL  - loop and check for the next empty child slot 
+				$$ = t;
+				}
               ;
 
 varDeclaration:
@@ -121,6 +126,7 @@ varDeclInitialize:
 
 varDeclId:
         ID {
+			//TODO pass line number from here. 
  		    printf("var dec id %s\n", $1);
 		    TreeNode* t = newDeclNode(VarK);
 		    t->attr.string = $1.string;
@@ -144,11 +150,7 @@ scopedTypeSpecifier:
 typeSpecifier:
         returnTypeSpecifier {
 		}
-        | RECTYPE  {
-		    TreeNode* t = newDeclNode(RecK);
-		    t->recType = $1.string;
-		    $$ = t;
-		}
+        | RECTYPE  {}
         ;
 
 returnTypeSpecifier:
@@ -170,7 +172,7 @@ funDeclaration:
 
 params:
       paramList {$$ = $1;}
-      | %empty {;}
+      | %empty {$$ = NULL;}
       ;
 
 paramList:
@@ -265,7 +267,7 @@ expression:
 		}
 
 	| mutable ADDASS expression {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->child[0] = $1;
 		t->child[1] = $3;
 		t->attr.op = ADDASS;
@@ -273,7 +275,7 @@ expression:
 		}
 
 	| mutable SUBASS expression {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->child[0] = $1;
 		t->child[1] = $3;
 		t->attr.op = SUBASS;
@@ -281,27 +283,27 @@ expression:
         	}
 
 	| mutable MULASS expression {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->child[0] = $1;
 		t->child[1] = $3;
 		t->attr.op = MULASS;
 		$$ = t;
         	} 
 	| mutable DIVASS expression {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->child[0] = $1;
 		t->child[1] = $3;
 		t->attr.op = DIVASS;
 		$$ = t;
         	} 
 	| mutable INC {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->child[0] = $1;
 		t->attr.op = INC;
 		$$ = t;
         	} 
 	| mutable DEC {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->child[0] = $1;
 		t->attr.op = DEC;
 		$$ = t;
@@ -331,33 +333,33 @@ relExpression:
 
 relop:
     	LESSEQ {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = LESSEQ;
 		$$ = t;
         } 
 	| GRTEQ {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = GRTEQ;
 		$$ = t;
         } 
 	| GTHAN {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = GTHAN;
 		$$ = t;
         } 
 	| LTHAN {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = LTHAN;
 		$$ = t;
         } 
 
 	| EQ {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = EQ;
 		$$ = t;
         } 
     | NOTEQ { 
-        TreeNode* t = newExpNode(ConstK);
+        TreeNode* t = newExpNode(OpK);
         t->attr.op = NOTEQ;
         $$ = t;
         }
@@ -370,12 +372,12 @@ sumExpression:
 
 sumop:
 	PLUS { 
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = PLUS;
 		$$ = t;
         	}
 	| DASH {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = DASH;
 		$$ = t;
         	}
@@ -388,19 +390,19 @@ term:
 
 mulop:
 	ASTERISK {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = ASTERISK;
 		$$ = t;
         	}
 
 	| FSLASH {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = FSLASH;
 		$$ = t;
         	}
 
 	| MOD {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = MOD;
 		$$ = t;
         	}
@@ -413,17 +415,17 @@ unaryExpression:
 
 unaryop:
 	DASH {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = DASH;
 		$$ = t;
         	}
 	| ASTERISK  {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = ASTERISK;
 		$$ = t;
         	}
 	| RANDOM {
-		TreeNode* t = newExpNode(ConstK);
+		TreeNode* t = newExpNode(OpK);
 		t->attr.op = RANDOM;
 		$$ = t;
         }
@@ -506,6 +508,7 @@ int main(int argc, char* argv[]) {
 		/*
 		* The string "" arg should contain all acceptable options
                 * */
+
 		switch(c)
 		{
 		        //Long option present
@@ -524,12 +527,15 @@ int main(int argc, char* argv[]) {
 
 	//File name has also been provided
         if(option_index < argc){
+			/**
             printf ("non-option ARGV-elements: ");
             while (optind < argc){
                 printf ("%s ", argv[optind++]);
                 putchar ('\n');
             }
+			**/
             myfile = fopen(argv[optind], "r");
+			yyin = myfile;
         } else { //No file name given
             yyin = stdin;   
 	}
