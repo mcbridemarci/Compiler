@@ -32,8 +32,8 @@ void yyerror(const char* s);
 
 //Use a union to hold possible grammar data types
 %union {
-	Token token;
-	struct TreeNode* treeNode;
+    Token token;
+    struct TreeNode* treeNode;
 }
 
 //Associate token types with union fields, terminal symbol AKA token type
@@ -64,493 +64,486 @@ void yyerror(const char* s);
 
 %%
 program:
-       declarationList { syntaxTree = $1; }
-       ;
+    declarationList { syntaxTree = $1; }
+    ;
 
 declarationList:
-               declarationList declaration {
-                   TreeNode* t = $1;
-            		if(t != NULL)
-            		{
-            			while(t->sibling != NULL)
-            				t = t->sibling;
-            
-            			t->sibling = $2;
-            			$$ = $1;
-            		}
-            		else
-            	    {
-            			$$ = $2;
-            		}
-	           }
-               | %empty { $$ = NULL; }
-               ;
+    declarationList declaration {
+        TreeNode* t = $1;
+        if(t != NULL){
+            while(t->sibling != NULL)
+                t = t->sibling;
+
+            t->sibling = $2;
+            $$ = $1;
+        }
+        else {
+            $$ = $2;
+        }
+   }
+   | %empty { $$ = NULL; }
+   ;
 
 declaration:
-        	varDeclaration { $$ = $1; }
-        	| funDeclaration { $$ = $1; }
-        	| recDeclaration { $$ = $1; }
-           ;
+    varDeclaration { $$ = $1; }
+    | funDeclaration { $$ = $1; }
+    | recDeclaration { $$ = $1; }
+    ;
 
 recDeclaration:
-              RECORD RECTYPE LCB localDeclarations RCB {
-				TreeNode* t = newDeclNode(RecK); 
-				TreeNode* i = t; // point to t 
-				//set flag
-				// record was only declared. Nothing to store in rectype. write to attr.name 
- 				t->recType = $2.string; // copy the name - TA " the hell is this ?!" dup strings 
-				// set things that are in the union. 
-				// set line number $1.lineno  
-				// child assign if kid != NULL  - loop and check for the next empty child slot 
-				$$ = t;
-				}
-              ;
+    RECORD RECTYPE LCB localDeclarations RCB {
+        TreeNode* t = newDeclNode(RecK); 
+        TreeNode* i = t; // point to t 
+        //set flag
+        // record was only declared. Nothing to store in rectype. write to attr.name 
+        t->recType = $2.string; // copy the name - TA " the hell is this ?!" dup strings 
+        // set things that are in the union. 
+        // set line number $1.lineno  
+        // child assign if kid != NULL  - loop and check for the next empty child slot 
+        $$ = t;
+    }
+    ;
 
 varDeclaration:
-              typeSpecifier varDeclList SCOLON
-              ;
+    typeSpecifier varDeclList SCOLON
+    ;
 
 scopedVarDeclaration:
-            scopedTypeSpecifier varDeclList SCOLON
-            ;
+    scopedTypeSpecifier varDeclList SCOLON
+    ;
 
 varDeclList:
-           varDeclList COMMA varDeclInitialize 
-           | varDeclInitialize
-           ;
+    varDeclList COMMA varDeclInitialize 
+    | varDeclInitialize
+    ;
 
 varDeclInitialize:
-            varDeclId 
-            | varDeclId COLON simpleExpression
-            ;
+    varDeclId 
+    | varDeclId COLON simpleExpression
+    ;
 
 varDeclId:
-        ID {
-			//TODO pass line number from here. 
- 		    printf("var dec id %s\n", $1);
-		    TreeNode* t = newDeclNode(VarK);
-		    t->attr.string = $1.string;
-		    t->expType = varType;
-		    $$ = t;
-		}
-        | ID LSQB NUMCONST RSQB {
-		    TreeNode* t = newDeclNode(VarK);
-		    t->attr.string = $1.string;
-		    t->expType = varType;
-		    t->isArray = 1;
-		    $$ = t;
-		}
-        ;
+    ID {
+        //TODO pass line number from here. 
+        printf("var dec id %s\n", $1);
+        TreeNode* t = newDeclNode(VarK);
+        t->attr.string = $1.string;
+        t->expType = varType;
+        $$ = t;
+    }
+    | ID LSQB NUMCONST RSQB {
+        TreeNode* t = newDeclNode(VarK);
+        t->attr.string = $1.string;
+        t->expType = varType;
+        t->isArray = 1;
+        $$ = t;
+    }
+    ;
 
 scopedTypeSpecifier:
-        STATIC typeSpecifier {;}
-        | typeSpecifier {$$ = $1;}
-        ;
+    STATIC typeSpecifier {;}
+    | typeSpecifier {$$ = $1;}
+    ;
 
 typeSpecifier:
-        returnTypeSpecifier {
-		}
-        | RECTYPE  {}
-        ;
+    returnTypeSpecifier {
+    }
+    | RECTYPE  {}
+    ;
 
 returnTypeSpecifier:
-            INT {
-			    varType = (int) NumT;
-			}
-            | BOOL {
-			    varType = (int) BoolT;
-			}
-            | CHAR {
-			    varType = (int) CharT;
-			}
-            ;
+    INT { //TODO: J, these are wrong
+        varType = (int) NumT;
+    }
+    | BOOL {
+        varType = (int) BoolT;
+    }
+    | CHAR {
+        varType = (int) CharT;
+    }
+    ;
 
 funDeclaration:
-              typeSpecifier ID LPAREN params RPAREN statement
-              | ID LPAREN params RPAREN statement {;}
-              ;
+    typeSpecifier ID LPAREN params RPAREN statement
+    | ID LPAREN params RPAREN statement {;}
+    ;
 
 params:
-      paramList {$$ = $1;}
-      | %empty {$$ = NULL;}
-      ;
+    paramList {$$ = $1;}
+    | %empty {$$ = NULL;}
+    ;
 
 paramList:
-         paramList SCOLON paramTypeList 
-         | paramTypeList {$$ = $1;}
-         ;
+    paramList SCOLON paramTypeList 
+    | paramTypeList {$$ = $1;}
+    ;
 
 paramTypeList:
-             typeSpecifier paramIdList {$$ = $1;}
-             ;
+    typeSpecifier paramIdList {$$ = $1;}
+    ;
 
 paramIdList:
-           paramIdList COMMA paramId 
-           | paramId {$$ = $1;}
-           ;
+    paramIdList COMMA paramId 
+    | paramId {$$ = $1;}
+    ;
 
 paramId:
-       ID {;}
-       | ID LSQB RSQB {;}
-       ;
+    ID {;}
+    | ID LSQB RSQB {;}
+    ;
 
 statement:
-        matched {$$ = $1;}
-        | unmatched {$$ = $1;}
-        ;
+    matched {$$ = $1;}
+    | unmatched {$$ = $1;}
+    ;
 
 matched:
-        IF LPAREN simpleExpression RPAREN matched ELSE matched {}
-        | iterationHeader matched {$$ = $1;}
-        | otherStmt {$$ = $1;}
-        ;
+    IF LPAREN simpleExpression RPAREN matched ELSE matched {}
+    | iterationHeader matched {$$ = $1;}
+    | otherStmt {$$ = $1;}
+    ;
 
 unmatched:
-         IF LPAREN simpleExpression RPAREN matched {}
-         | IF LPAREN simpleExpression RPAREN unmatched {}
-         | IF LPAREN simpleExpression RPAREN matched ELSE unmatched {}
-         | iterationHeader unmatched {$$ = $1;}
-        ;
+    IF LPAREN simpleExpression RPAREN matched {}
+    | IF LPAREN simpleExpression RPAREN unmatched {}
+    | IF LPAREN simpleExpression RPAREN matched ELSE unmatched {}
+    | iterationHeader unmatched {$$ = $1;}
+    ;
 
 iterationHeader: 
-        WHILE LPAREN simpleExpression RPAREN {}
-        ;
+    WHILE LPAREN simpleExpression RPAREN {}
+    ;
 
 otherStmt:
-         expressionStmt {$$ = $1;}
-         | compoundStmt {$$ = $1;}
-         | returnStmt {$$ = $1;}
-         | breakStmt {$$ = $1;}
-         ;
+    expressionStmt {$$ = $1;}
+    | compoundStmt {$$ = $1;}
+    | returnStmt {$$ = $1;}
+    | breakStmt {$$ = $1;}
+    ;
 
 compoundStmt:
-            LCB localDeclarations statementList RCB {
-                TreeNode* t = newStmtNode(CompoundK);
-        		t->child[0] = $2;
-        		t->child[1] = $3;
-        		$$ = t;
-    		    }
-            ;
+    LCB localDeclarations statementList RCB {
+        TreeNode* t = newStmtNode(CompoundK);
+        t->child[0] = $2;
+        t->child[1] = $3;
+        $$ = t;
+        }
+    ;
 
 localDeclarations:
-             localDeclarations scopedVarDeclaration {$$ = $1;} 
-             | %empty {$$ = NULL;}
-             ;
+    localDeclarations scopedVarDeclaration {$$ = $1;} 
+    | %empty {$$ = NULL;}
+    ;
 
 statementList:
-             statementList statement {$$ = $1;}
-             | %empty {$$ = NULL;}
-             ;
+    statementList statement {$$ = $1;}
+    | %empty {$$ = NULL;}
+    ;
 
 expressionStmt:
-              expression SCOLON
-              | SCOLON {}
-              ;
+    expression SCOLON
+    | SCOLON {}
+    ;
 
 returnStmt:
-	RETURN SCOLON {}
-	| RETURN expression SCOLON {}
-	;
+    RETURN SCOLON {}
+    | RETURN expression SCOLON {}
+    ;
 
 breakStmt:
-	BREAK SCOLON {}
+    BREAK SCOLON {}
     ;
 
 
 expression:
-    	mutable ASSIGN expression {
-		TreeNode* t = newExpNode(OpK);
-		t->child[0] = $1;
-		t->child[1] = $3;
-		t->attr.op = ASSIGN;
-		$$ = t;
-		}
-
-	| mutable ADDASS expression {
-		TreeNode* t = newExpNode(OpK);
-		t->child[0] = $1;
-		t->child[1] = $3;
-		t->attr.op = ADDASS;
-		$$ = t;
-		}
-
-	| mutable SUBASS expression {
-		TreeNode* t = newExpNode(OpK);
-		t->child[0] = $1;
-		t->child[1] = $3;
-		t->attr.op = SUBASS;
-		$$ = t;
-        	}
-
-	| mutable MULASS expression {
-		TreeNode* t = newExpNode(OpK);
-		t->child[0] = $1;
-		t->child[1] = $3;
-		t->attr.op = MULASS;
-		$$ = t;
-        	} 
-	| mutable DIVASS expression {
-		TreeNode* t = newExpNode(OpK);
-		t->child[0] = $1;
-		t->child[1] = $3;
-		t->attr.op = DIVASS;
-		$$ = t;
-        	} 
-	| mutable INC {
-		TreeNode* t = newExpNode(OpK);
-		t->child[0] = $1;
-		t->attr.op = INC;
-		$$ = t;
-        	} 
-	| mutable DEC {
-		TreeNode* t = newExpNode(OpK);
-		t->child[0] = $1;
-		t->attr.op = DEC;
-		$$ = t;
-        	} 
-	| simpleExpression
-	;
+    mutable ASSIGN expression {
+        TreeNode* t = newExpNode(OpK);
+        t->child[0] = $1;
+        t->child[1] = $3;
+        t->attr.op = ASSIGN;
+        $$ = t;
+        }
+    | mutable ADDASS expression {
+        TreeNode* t = newExpNode(OpK);
+        t->child[0] = $1;
+        t->child[1] = $3;
+        t->attr.op = ADDASS;
+        $$ = t;
+        }
+    | mutable SUBASS expression {
+        TreeNode* t = newExpNode(OpK);
+        t->child[0] = $1;
+        t->child[1] = $3;
+        t->attr.op = SUBASS;
+        $$ = t;
+        }
+    | mutable MULASS expression {
+        TreeNode* t = newExpNode(OpK);
+        t->child[0] = $1;
+        t->child[1] = $3;
+        t->attr.op = MULASS;
+        $$ = t;
+        } 
+    | mutable DIVASS expression {
+        TreeNode* t = newExpNode(OpK);
+        t->child[0] = $1;
+        t->child[1] = $3;
+        t->attr.op = DIVASS;
+        $$ = t;
+        }
+    | mutable INC {
+        TreeNode* t = newExpNode(OpK);
+        t->child[0] = $1;
+        t->attr.op = INC;
+        $$ = t;
+        } 
+    | mutable DEC {
+        TreeNode* t = newExpNode(OpK);
+        t->child[0] = $1;
+        t->attr.op = DEC;
+        $$ = t;
+        } 
+    | simpleExpression
+    ;
 
 simpleExpression:
-	simpleExpression OR andExpression
-	| andExpression {$$ = $1;}
-	;
+    simpleExpression OR andExpression
+    | andExpression {$$ = $1;}
+    ;
 
 andExpression: 
-	andExpression AND unaryRelExpression 
-	| unaryRelExpression {$$ = $1;}
-	;
+    andExpression AND unaryRelExpression 
+    | unaryRelExpression {$$ = $1;}
+    ;
 
 unaryRelExpression:
-	NOT unaryRelExpression {}
-	| relExpression {$$ = $1;}
-	;
+    NOT unaryRelExpression {}
+    | relExpression {$$ = $1;}
+    ;
 
 relExpression:
-	sumExpression relop sumExpression 
-	| sumExpression {$$ = $1;}
+    sumExpression relop sumExpression 
+    | sumExpression {$$ = $1;}
     ;
 
 relop:
-    	LESSEQ {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = LESSEQ;
-		$$ = t;
+    LESSEQ {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = LESSEQ;
+        $$ = t;
         } 
-	| GRTEQ {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = GRTEQ;
-		$$ = t;
+    | GRTEQ {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = GRTEQ;
+        $$ = t;
         } 
-	| GTHAN {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = GTHAN;
-		$$ = t;
+    | GTHAN {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = GTHAN;
+        $$ = t;
         } 
-	| LTHAN {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = LTHAN;
-		$$ = t;
+    | LTHAN {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = LTHAN;
+        $$ = t;
         } 
 
-	| EQ {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = EQ;
-		$$ = t;
+    | EQ {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = EQ;
+        $$ = t;
         } 
     | NOTEQ { 
         TreeNode* t = newExpNode(OpK);
         t->attr.op = NOTEQ;
         $$ = t;
         }
-	;
+    ;
 
 sumExpression:
-	sumExpression sumop term {$$ = $1;}
-	| term {$$ = $1;}
-	;
+    sumExpression sumop term {$$ = $1;}
+    | term {$$ = $1;}
+    ;
 
 sumop:
-	PLUS { 
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = PLUS;
-		$$ = t;
-        	}
-	| DASH {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = DASH;
-		$$ = t;
-        	}
-	;
+    PLUS { 
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = PLUS;
+        $$ = t;
+        }
+    | DASH {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = DASH;
+        $$ = t;
+        }
+    ;
 
 term:
-	term mulop unaryExpression {$$ = $1;}
-	| unaryExpression {$$ = $1;}
-	;
+    term mulop unaryExpression {$$ = $1;}
+    | unaryExpression {$$ = $1;}
+    ;
 
 mulop:
-	ASTERISK {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = ASTERISK;
-		$$ = t;
-        	}
-
-	| FSLASH {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = FSLASH;
-		$$ = t;
-        	}
-
-	| MOD {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = MOD;
-		$$ = t;
-        	}
-	;
+    ASTERISK {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = ASTERISK;
+        $$ = t;
+        }
+    | FSLASH {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = FSLASH;
+        $$ = t;
+        }
+    | MOD {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = MOD;
+        $$ = t;
+        }
+    ;
 
 unaryExpression:
-	unaryop unaryExpression {$$ = $1;}
-	| factor {$$ = $1;}
-	;
+    unaryop unaryExpression {$$ = $1;}
+    | factor {$$ = $1;}
+    ;
 
 unaryop:
-	DASH {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = DASH;
-		$$ = t;
-        	}
-	| ASTERISK  {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = ASTERISK;
-		$$ = t;
-        	}
-	| RANDOM {
-		TreeNode* t = newExpNode(OpK);
-		t->attr.op = RANDOM;
-		$$ = t;
+    DASH {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = DASH;
+        $$ = t;
         }
-	;
+    | ASTERISK  {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = ASTERISK;
+        $$ = t;
+        }
+    | RANDOM {
+        TreeNode* t = newExpNode(OpK);
+        t->attr.op = RANDOM;
+        $$ = t;
+        }
+    ;
 
 factor:
-	immutable {$$ = $1;}
-	| mutable {$$ = $1;}
-	;
+    immutable {$$ = $1;}
+    | mutable {$$ = $1;}
+    ;
 
 mutable:
-	ID {;}
-	| mutable LSQB expression RSQB
-	| mutable PERIOD ID
-	| LSQB expression RSQB {}
-	;
+    ID {;}
+    | mutable LSQB expression RSQB
+    | mutable PERIOD ID
+    | LSQB expression RSQB {}
+    ;
 
 immutable:
-	LPAREN expression RPAREN {}
-	| call {$$ = $1;}
-	| constant {$$ = $1;}
-	;
+    LPAREN expression RPAREN {}
+    | call {$$ = $1;}
+    | constant {$$ = $1;}
+    ;
 
 call:
-	ID LPAREN args RPAREN {;}
-	;
+    ID LPAREN args RPAREN {;}
+    ;
 
 args:
-	argList {$$ = $1;}
-	| %empty {$$ = NULL;}
-	;
+    argList {$$ = $1;}
+    | %empty {$$ = NULL;}
+    ;
 
 argList: 
-	argList COMMA expression
-	| expression {$$ = $1;}
-	;
+    argList COMMA expression
+    | expression {$$ = $1;}
+    ;
 
 constant:
-	NUMCONST {
-		TreeNode* t = newExpNode(ConstK);
-		t->attr.value = $1.value;
-		t->expType = NumT;
-		$$ = t;
-		}
-	| CHARCONST {
-		TreeNode* t = newExpNode(ConstK);
-		t->attr.cvalue = $1.letter; 
-		t->expType = CharT;
-		$$ = t;
-		}
+    NUMCONST {
+        TreeNode* t = newExpNode(ConstK);
+        t->attr.value = $1.value;
+        t->expType = NumT;
+        $$ = t;
+        }
+    | CHARCONST {
+        TreeNode* t = newExpNode(ConstK);
+        t->attr.cvalue = $1.letter; 
+        t->expType = CharT;
+        $$ = t;
+        }
     | BOOLCONST {
-		TreeNode* t = newExpNode(ConstK);
-		t->attr.value = $1.value;
-		t->expType = BoolT;
-		$$ = t;
-		}
-    	;
+        TreeNode* t = newExpNode(ConstK);
+        t->attr.value = $1.value;
+        t->expType = BoolT;
+        $$ = t;
+        }
+    ;
 
 
 %%
 
 /*
-* MAIN FUNCTION
-*/
+ * MAIN FUNCTION
+ */
 int main(int argc, char* argv[]) {
 
-	/* Command line option variables
-	 *
-	 * c - value of flag
-	 * long_options - array of word-sized options
-	 * option_index - location in arg list
-	 */
-	int c;
-	struct option long_options[] = {};
-	int option_index = 0;
-        FILE* myfile;
+    /* Command line option variables
+     *
+     * c - value of flag
+     * long_options - array of word-sized options
+     * option_index - location in arg list
+     */
+    int c;
+    struct option long_options[] = {};
+    int option_index = 0;
+    FILE* myfile;
 
-	//Check for command line args
-	while ((c = getopt_long(argc, argv, "d", long_options, &option_index)) != -1){
-		/*
-		* The string "" arg should contain all acceptable options
-                * */
+    //Check for command line args
+    while ((c = getopt_long(argc, argv, "d", long_options, &option_index)) != -1){
+        /*
+         * The string "" arg should contain all acceptable options
+         * */
 
-		switch(c)
-		{
-		        //Long option present
-		        case 0:
-				break;
-			//Debug parser
-			case  'd':
-				yydebug = 1;
-				break;
-			//Unknown option
-			default:
-				return(-1);
-				break;
-		}
-	}
-
-	//File name has also been provided
-        if(option_index < argc){
-			/**
-            printf ("non-option ARGV-elements: ");
-            while (optind < argc){
-                printf ("%s ", argv[optind++]);
-                putchar ('\n');
-            }
-			**/
-            myfile = fopen(argv[optind], "r");
-			yyin = myfile;
-        } else { //No file name given
-            yyin = stdin;   
-	}
-
-	//Parse input until EOF
-        while(!feof(yyin)){
-            yyparse();
+        switch(c)
+        {
+            //Long option present
+            case 0:
+                break;
+                //Debug parser
+            case  'd':
+                yydebug = 1;
+                break;
+                //Unknown option
+            default:
+                return(-1);
+                break;
         }
+    }
 
-	printTree(syntaxTree);
+    //File name has also been provided
+    if(option_index < argc){
+        /**
+          printf ("non-option ARGV-elements: ");
+          while (optind < argc){
+          printf ("%s ", argv[optind++]);
+          putchar ('\n');
+          }
+         **/
+        myfile = fopen(argv[optind], "r");
+        yyin = myfile;
+    } else { //No file name given
+        yyin = stdin;   
+    }
 
-	//Close read-in file
-	fclose(yyin);
+    //Parse input until EOF
+    while(!feof(yyin)){
+        yyparse();
+    }
 
-	return(0);
+    printTree(syntaxTree);
+
+    //Close read-in file
+    fclose(yyin);
+
+    return(0);
 }
 
 
@@ -561,7 +554,7 @@ int main(int argc, char* argv[]) {
 */
 void yyerror(const char* s) {
 
-	fprintf(stdout, "ERROR(%d): %s\n",line_num, s);
+    fprintf(stdout, "ERROR(%d): %s\n",line_num, s);
 
-	return;
+    return;
 }
