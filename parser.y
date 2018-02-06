@@ -470,13 +470,13 @@ constant:
 		}
 	| CHARCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.cvalue = $1.letter;
+		t->attr.cvalue = $1.letter; 
 		t->expType = CharT;
 		$$ = t;
 		}
     | BOOLCONST {
 		TreeNode* t = newExpNode(ConstK);
-		t->attr.value = $1.value; 
+		t->attr.value = $1.value;
 		t->expType = BoolT;
 		$$ = t;
 		}
