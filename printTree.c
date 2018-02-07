@@ -219,7 +219,7 @@ void printOp(OpKind token) {
         case Colon:
             printf("Op: : "); break;
         default: /* should never happen */
-            printf("Unknown token %d\n", int(token));
+            printf("Unknown token %d\n", (int)token);
     }
 }
 

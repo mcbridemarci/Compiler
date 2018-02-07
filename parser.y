@@ -111,14 +111,13 @@ varDeclaration:
     typeSpecifier varDeclList SCOLON {
         TreeNode* t = $2; 
         t->kind.decl = VarK;
-        t->expType = $1.expType;
+        t->expType = $1->expType;
         free($1);
  
         while (t->sibling != NULL) {
             t = t->sibling;
             t->kind.decl = VarK;
-            t->expType = $1.expType;
-            free($1);
+            t->expType = $1->expType;
         } 
         $$ = $2;
     }
@@ -126,20 +125,7 @@ varDeclaration:
 
 scopedVarDeclaration:
     scopedTypeSpecifier varDeclList SCOLON {
-        TreeNode* t = $2; 
-        t->kind.decl = VarK;
-        t->expType = $1.expType;
-        t->isStatic = $1->isStatic;
-        free($1);
- 
-        while (t->sibling != NULL) {
-            t = t->sibling;
-            t->kind.decl = VarK;
-            t->expType = $1.expType;
-            t->isStatic = $1->isStatic;
-            free($1);
-        } 
-        $$ = $2;
+        
     }
     ;
 
@@ -197,7 +183,8 @@ scopedTypeSpecifier:
 
 typeSpecifier:
     returnTypeSpecifier {$$ = $1;}
-    | RECTYPE {$$ = $1;}
+    | RECTYPE { //TODO fill in RECTYPE braces
+    }   
     ;
 
 returnTypeSpecifier:
@@ -219,8 +206,30 @@ returnTypeSpecifier:
     ;
 
 funDeclaration:
-    typeSpecifier ID LPAREN params RPAREN statement
-    | ID LPAREN params RPAREN statement {;}
+    typeSpecifier ID LPAREN params RPAREN statement {
+        TreeNode* t = newDeclNode(FuncK); 
+        t->expType = $1->expType;
+        free($1);
+        
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $4;
+        t->child[++j] = $6;
+        $$ = t;
+    }
+    | ID LPAREN params RPAREN statement {
+        TreeNode* t = newDeclNode(FuncK); 
+        
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $3;
+        t->child[++j] = $5;
+        $$ = t;
+    }
     ;
 
 params:
@@ -229,22 +238,65 @@ params:
     ;
 
 paramList:
-    paramList SCOLON paramTypeList 
+    paramList SCOLON paramTypeList
+    {
+        TreeNode* t = $1;
+        while (t->sibling != NULL) {
+            t = t->sibling;
+        } 
+        t->sibling = $3;
+        $$ = t;
+    }
     | paramTypeList {$$ = $1;}
     ;
 
 paramTypeList:
-    typeSpecifier paramIdList {$$ = $1;}
+    typeSpecifier paramIdList {
+        TreeNode* t = $2; 
+        t->kind.decl = FuncK;
+        t->expType = $1->expType;
+        free($1);
+ 
+        while (t->sibling != NULL) {
+            t = t->sibling;
+            t->kind.decl = FuncK;
+            t->expType = $1->expType;
+        }
+    }
     ;
 
 paramIdList:
-    paramIdList COMMA paramId 
+    paramIdList COMMA paramId {
+        TreeNode* t = $1;
+        if (t != NULL) {
+            while(t->sibling != NULL)
+                t = t->sibling;
+
+            t->sibling = $3;
+            $$ = $1;
+++
+        }
+        else {
+            $$ = $3;
+        }
+    }
     | paramId {$$ = $1;}
     ;
 
 paramId:
-    ID {;}
-    | ID LSQB RSQB {;}
+    ID {
+        TreeNode* t = newExpNode(IdK);
+        t->attr.name = $1.string;
+        t->lineno = $1.lineNumber;
+        $$ = t; 
+    }
+    | ID LSQB RSQB {
+        TreeNode* t = newExpNode(IdK);
+        t->attr.name = $1.string;
+        t->lineno = $1.lineNumber;
+        t->isArray = 1;
+        $$ = t;
+    }
     ;
 
 statement:
@@ -253,7 +305,19 @@ statement:
     ;
 
 matched:
-    IF LPAREN simpleExpression RPAREN matched ELSE matched {}
+    IF LPAREN simpleExpression RPAREN matched ELSE matched {
+        TreeNode* t = newStmtNode(IfK);
+        t->lineno = $1.lineNumber;
+
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $3;
+        t->child[++j] = $5;
+        t->child[++j] = $7;
+        $$ = t;
+    }
     | iterationHeader matched {$$ = $1;}
     | otherStmt {$$ = $1;}
     ;
@@ -589,13 +653,14 @@ int main(int argc, char* argv[]) {
     }
 
     //Parse input until EOF
-    while(!feof(yyin)){
+    while(!feof(yyin) && !ferror(yyin)){
         yyparse();
     }
-
+    printf("\n\n\n\n\nout of yyparse!\n\n\n\n\n\n");
     printTree(syntaxTree);
 
     //Close read-in file
+    printf("\n\n\n\n\nout of printTree!\n\n\n\n\n\n");
     fclose(yyin);
 
     return(0);
