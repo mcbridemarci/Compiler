@@ -111,70 +111,111 @@ varDeclaration:
     typeSpecifier varDeclList SCOLON {
         TreeNode* t = $2; 
         t->kind.decl = VarK;
-        t->expType = $1;
+        t->expType = $1.expType;
+        free($1);
  
         while (t->sibling != NULL) {
             t = t->sibling;
             t->kind.decl = VarK;
-            t->expType = $1;
+            t->expType = $1.expType;
+            free($1);
         } 
         $$ = $2;
     }
     ;
 
 scopedVarDeclaration:
-    scopedTypeSpecifier varDeclList SCOLON
+    scopedTypeSpecifier varDeclList SCOLON {
+        TreeNode* t = $2; 
+        t->kind.decl = VarK;
+        t->expType = $1.expType;
+        t->isStatic = $1->isStatic;
+        free($1);
+ 
+        while (t->sibling != NULL) {
+            t = t->sibling;
+            t->kind.decl = VarK;
+            t->expType = $1.expType;
+            t->isStatic = $1->isStatic;
+            free($1);
+        } 
+        $$ = $2;
+    }
     ;
 
 varDeclList:
-    varDeclList COMMA varDeclInitialize 
-    | varDeclInitialize
+    varDeclList COMMA varDeclInitialize  {
+        TreeNode* t = $1;
+        if(t != NULL){
+            while(t->sibling != NULL)
+                t = t->sibling;
+
+            t->sibling = $3;
+            $$ = $1;
+        }
+        else {
+            $$ = $3;
+        }
+    }
+    | varDeclInitialize {$$ = $1;}
     ;
 
 varDeclInitialize:
-    varDeclId 
-    | varDeclId COLON simpleExpression
+    varDeclId {$$ = $1;}
+    | varDeclId COLON simpleExpression {
+        j = 0; 
+        while ($1->child[j] != NULL) {
+            j++;
+        } 
+        $1->child[j] = $3;
+        }
     ;
 
 varDeclId:
     ID {
-        //TODO pass line number from here. 
-        //printf("var dec id %s\n", $1);
-        TreeNode* t = newDeclNode(VarK);
-        t->attr.string = $1.string;
-        t->expType = varType;
+        TreeNode* t = newExpNode(IdK);
+        t->attr.name = $1.string;
+        t->lineno = $1.lineNumber;
         $$ = t;
     }
     | ID LSQB NUMCONST RSQB {
-        TreeNode* t = newDeclNode(VarK);
-        t->attr.string = $1.string;
-        t->expType = varType;
+        TreeNode* t = newExpNode(IdK);
+        t->attr.name = $1.string;
+        t->lineno = $1.lineNumber;
         t->isArray = 1;
         $$ = t;
     }
     ;
 
 scopedTypeSpecifier:
-    STATIC typeSpecifier {;}
+    STATIC typeSpecifier {
+        $2->isStatic = 1;
+        $$ = $2;
+        }
     | typeSpecifier {$$ = $1;}
     ;
 
 typeSpecifier:
-    returnTypeSpecifier {
-    }
-    | RECTYPE  {}
+    returnTypeSpecifier {$$ = $1;}
+    | RECTYPE {$$ = $1;}
     ;
 
 returnTypeSpecifier:
-    INT { //TODO: J, these are wrong
-        varType = (int) NumT;
-    }
+    INT {
+        TreeNode* t = newDeclNode(VarK);
+        t->expType = NumT;
+        $$ = t;
+        }
     | BOOL {
-        varType = (int) BoolT;
-    }
+        TreeNode* t = newDeclNode(VarK);
+        t->expType = BoolT;
+        $$ = t;
+        }
     | CHAR {
-        varType = (int) CharT;
-    }
+        TreeNode* t = newDeclNode(VarK);
+        t->expType = CharT;
+        $$ = t;
+        }
     ;
 
 funDeclaration:
