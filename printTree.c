@@ -12,7 +12,7 @@ extern int line_num;
 /*
 * Track indentation level for AST printing?
 */
-static format = 0;
+static int format = 0;
 #define TAB format=2
 #define UNTAB format-=2
 
