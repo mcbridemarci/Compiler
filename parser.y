@@ -561,11 +561,11 @@ simpleExpression:
         t->attr.op = Or;
 
         j = 0;    
-        while ($2->child[j] != NULL) {
+        while (t->child[j] != NULL) {
             j++;
         } 
-        $2->child[j] = $1;
-        $2->child[j] = $3;
+        t->child[j] = $1;
+        t->child[j] = $3;
         $$ = t;
         } 
     | andExpression {$$ = $1;}
@@ -578,11 +578,11 @@ andExpression:
         t->attr.op = And;
 
         j = 0;    
-        while ($2->child[j] != NULL) {
+        while (t->child[j] != NULL) {
             j++;
         } 
-        $2->child[j] = $1;
-        $2->child[j] = $3;
+        t->child[j] = $1;
+        t->child[j] = $3;
         $$ = t;
         } 
     | unaryRelExpression {$$ = $1;}
