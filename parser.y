@@ -274,7 +274,6 @@ paramIdList:
 
             t->sibling = $3;
             $$ = $1;
-++
         }
         else {
             $$ = $3;
@@ -318,7 +317,14 @@ matched:
         t->child[++j] = $7;
         $$ = t;
     }
-    | iterationHeader matched {$$ = $1;}
+    | iterationHeader matched {
+        TreeNode* t = $1;  
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        }
+        t->child[j] = $2;
+    }
     | otherStmt {$$ = $1;}
     ;
 
