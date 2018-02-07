@@ -329,14 +329,66 @@ matched:
     ;
 
 unmatched:
-    IF LPAREN simpleExpression RPAREN matched {}
-    | IF LPAREN simpleExpression RPAREN unmatched {}
-    | IF LPAREN simpleExpression RPAREN matched ELSE unmatched {}
-    | iterationHeader unmatched {$$ = $1;}
+    IF LPAREN simpleExpression RPAREN matched {
+        TreeNode* t = newStmtNode(IfK);
+        t->lineno = $1.lineNumber;
+
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $3;
+        t->child[++j] = $5;
+        $$ = t;
+    }
+    | IF LPAREN simpleExpression RPAREN unmatched {
+        TreeNode* t = newStmtNode(IfK);
+        t->lineno = $1.lineNumber;
+
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $3;
+        t->child[++j] = $5;
+        $$ = t;
+    }
+    | IF LPAREN simpleExpression RPAREN matched ELSE unmatched {
+        TreeNode* t = newStmtNode(IfK);
+        t->lineno = $1.lineNumber;
+
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $3;
+        t->child[++j] = $5;
+        t->child[++j] = $7;
+        $$ = t;
+    }
+    | iterationHeader unmatched {
+        TreeNode* t = $1;  
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        }
+        t->child[j] = $2;
+        }
     ;
 
 iterationHeader: 
-    WHILE LPAREN simpleExpression RPAREN {}
+    WHILE LPAREN simpleExpression RPAREN {
+        TreeNode* t = newStmtNode(WhileK);
+        t->lineno = $1.lineNumber;
+        $$ = t;
+
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $3;
+        $$ = t;
+    }
     ;
 
 otherStmt:
@@ -349,202 +401,353 @@ otherStmt:
 compoundStmt:
     LCB localDeclarations statementList RCB {
         TreeNode* t = newStmtNode(CompoundK);
-        t->child[0] = $2;
-        t->child[1] = $3;
+        t->lineno = $1.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $2;
+        t->child[++j] = $3;
         $$ = t;
         }
     ;
 
 localDeclarations:
-    localDeclarations scopedVarDeclaration {$$ = $1;} 
+    localDeclarations scopedVarDeclaration {$$ = $2;} 
     | %empty {$$ = NULL;}
     ;
 
 statementList:
-    statementList statement {$$ = $1;}
+    statementList statement {
+        TreeNode* t = $1;
+        if (t != NULL) {
+            while(t->sibling != NULL)
+                t = t->sibling;
+
+            t->sibling = $2;
+            $$ = $1;
+        }
+        else {
+            $$ = $2;
+        }
+    }
     | %empty {$$ = NULL;}
     ;
 
 expressionStmt:
-    expression SCOLON
-    | SCOLON {}
+    expression SCOLON {$$ = $1;}
+    | SCOLON {$$ = NULL;}
     ;
 
 returnStmt:
-    RETURN SCOLON {}
-    | RETURN expression SCOLON {}
+    RETURN SCOLON {
+        TreeNode* t = newStmtNode(ReturnK);
+        t->lineno = $1.lineNumber;
+        $$ = t;
+    }
+    | RETURN expression SCOLON {
+        TreeNode* t = newStmtNode(ReturnK);
+        t->lineno = $1.lineNumber;
+        $$ = t;
+
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $2;
+        $$ = t;
+    }
     ;
 
 breakStmt:
-    BREAK SCOLON {}
+    BREAK SCOLON {
+        TreeNode* t = newStmtNode(BreakK);
+        t->lineno = $1.lineNumber;
+        $$ = t;
+    }
     ;
 
 
 expression:
     mutable ASSIGN expression {
         TreeNode* t = newExpNode(OpK);
-        t->child[0] = $1;
-        t->child[1] = $3;
-        t->attr.op = ASSIGN;
+        t->lineno = $2.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $1;
+        t->child[++j] = $3;
+        t->attr.op = Assign;
         $$ = t;
         }
     | mutable ADDASS expression {
         TreeNode* t = newExpNode(OpK);
-        t->child[0] = $1;
-        t->child[1] = $3;
-        t->attr.op = ADDASS;
+        t->lineno = $2.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $1;
+        t->child[++j] = $3;
+        t->attr.op = Addass;
         $$ = t;
         }
     | mutable SUBASS expression {
         TreeNode* t = newExpNode(OpK);
-        t->child[0] = $1;
-        t->child[1] = $3;
-        t->attr.op = SUBASS;
+        t->lineno = $2.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $1;
+        t->child[++j] = $3;
+        t->attr.op = Subass;
         $$ = t;
         }
     | mutable MULASS expression {
         TreeNode* t = newExpNode(OpK);
-        t->child[0] = $1;
-        t->child[1] = $3;
-        t->attr.op = MULASS;
+        t->lineno = $2.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $1;
+        t->child[++j] = $3;
+        t->attr.op = Mulass;
         $$ = t;
         } 
     | mutable DIVASS expression {
         TreeNode* t = newExpNode(OpK);
-        t->child[0] = $1;
-        t->child[1] = $3;
-        t->attr.op = DIVASS;
+        t->lineno = $2.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $1;
+        t->child[++j] = $3;
+        t->attr.op = Divass;
         $$ = t;
         }
     | mutable INC {
         TreeNode* t = newExpNode(OpK);
-        t->child[0] = $1;
-        t->attr.op = INC;
+        t->lineno = $2.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $1;
+        t->attr.op = Inc;
         $$ = t;
         } 
     | mutable DEC {
         TreeNode* t = newExpNode(OpK);
-        t->child[0] = $1;
-        t->attr.op = DEC;
+        t->lineno = $2.lineNumber;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $1;
+        t->attr.op = Dec;
         $$ = t;
         } 
-    | simpleExpression
+    | simpleExpression {$$ = $1;}
     ;
 
 simpleExpression:
-    simpleExpression OR andExpression
+    simpleExpression OR andExpression {
+        TreeNode* t = newExpNode(OpK);
+        t->lineno = $2.lineNumber;
+        t->attr.op = Or;
+
+        j = 0;    
+        while ($2->child[j] != NULL) {
+            j++;
+        } 
+        $2->child[j] = $1;
+        $2->child[j] = $3;
+        $$ = t;
+        } 
     | andExpression {$$ = $1;}
     ;
 
 andExpression: 
-    andExpression AND unaryRelExpression 
+    andExpression AND unaryRelExpression {
+        TreeNode* t = newExpNode(OpK);
+        t->lineno = $2.lineNumber;
+        t->attr.op = And;
+
+        j = 0;    
+        while ($2->child[j] != NULL) {
+            j++;
+        } 
+        $2->child[j] = $1;
+        $2->child[j] = $3;
+        $$ = t;
+        } 
     | unaryRelExpression {$$ = $1;}
     ;
 
 unaryRelExpression:
-    NOT unaryRelExpression {}
+    NOT unaryRelExpression {
+        TreeNode* t = newExpNode(OpK);
+        t->lineno = $1.lineNumber;
+        t->attr.op = Not;
+
+        j = 0;    
+        while ($2->child[j] != NULL) {
+            j++;
+        } 
+        $2->child[j] = $2;
+        $$ = t;
+        } 
     | relExpression {$$ = $1;}
     ;
 
 relExpression:
-    sumExpression relop sumExpression 
+    sumExpression relop sumExpression {
+        j = 0;    
+        while ($2->child[j] != NULL) {
+            j++;
+        } 
+        $2->child[j] = $1;
+        $2->child[++j] = $3;
+        $$ = $2;
+    }
     | sumExpression {$$ = $1;}
     ;
 
 relop:
     LESSEQ {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = LESSEQ;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Lesseq;
         $$ = t;
         } 
     | GRTEQ {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = GRTEQ;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Grteq;
         $$ = t;
         } 
     | GTHAN {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = GTHAN;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Gthan;
         $$ = t;
         } 
     | LTHAN {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = LTHAN;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Lthan;
         $$ = t;
         } 
 
     | EQ {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = EQ;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Eq;
         $$ = t;
         } 
     | NOTEQ { 
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = NOTEQ;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Noteq;
         $$ = t;
         }
     ;
 
 sumExpression:
-    sumExpression sumop term {$$ = $1;}
+    sumExpression sumop term {
+        j = 0;    
+        while ($2->child[j] != NULL) {
+            j++;
+        } 
+        $2->child[j] = $1;
+        $2->child[++j] = $3;
+        $$ = $2;
+    }
     | term {$$ = $1;}
     ;
 
 sumop:
     PLUS { 
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = PLUS;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Plus;
         $$ = t;
         }
     | DASH {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = DASH;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Dash;
         $$ = t;
         }
     ;
 
 term:
-    term mulop unaryExpression {$$ = $1;}
+    term mulop unaryExpression {
+        j = 0;    
+        while ($2->child[j] != NULL) {
+            j++;
+        } 
+        $2->child[j] = $1;
+        $2->child[++j] = $3;
+        $$ = $2;
+    }
     | unaryExpression {$$ = $1;}
     ;
 
 mulop:
     ASTERISK {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = ASTERISK;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Asterisk;
         $$ = t;
         }
     | FSLASH {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = FSLASH;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Fslash;
         $$ = t;
         }
     | MOD {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = MOD;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Mod;
         $$ = t;
         }
     ;
 
 unaryExpression:
-    unaryop unaryExpression {$$ = $1;}
+    unaryop unaryExpression {
+        j = 0;    
+        while ($2->child[j] != NULL) {
+            j++;
+        } 
+        $2->child[j] = $2;
+        $$ = $2;
+    }
     | factor {$$ = $1;}
     ;
 
 unaryop:
     DASH {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = DASH;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Dash;
         $$ = t;
         }
     | ASTERISK  {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = ASTERISK;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Asterisk;
         $$ = t;
         }
     | RANDOM {
         TreeNode* t = newExpNode(OpK);
-        t->attr.op = RANDOM;
+        t->lineno = $1.lineNumber;
+        t->attr.op = Random;
         $$ = t;
         }
     ;
@@ -555,20 +758,74 @@ factor:
     ;
 
 mutable:
-    ID {;}
-    | mutable LSQB expression RSQB
-    | mutable PERIOD ID
-    | LSQB expression RSQB {}
+    ID {
+        TreeNode* t = newExpNode(IdK);
+        t->attr.name = $1.string;
+        t->lineno = $1.lineNumber;
+        $$ = t;
+    }
+    | mutable LSQB expression RSQB {
+        TreeNode* t = newExpNode(OpK);
+        t->lineno = $2.lineNumber;
+        t->attr.op = Lsqb;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        }
+        t->child[j] = $1; 
+        t->child[++j] = $3;
+        $$ = t;
+        }
+    | mutable PERIOD ID {
+        TreeNode* t = newExpNode(OpK);
+        t->lineno = $2.lineNumber;
+        t->attr.op = Period;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        }
+
+        t->child[j] = $1;
+
+        TreeNode* s = newExpNode(IdK);
+        s->attr.name = $3.string;
+        s->lineno = $3.lineNumber;
+        t->child[++j] = s;
+
+        $$ = t;
+        }
+    | LSQB expression RSQB {
+        TreeNode* t = newExpNode(OpK);
+        t->lineno = $1.lineNumber;
+        t->attr.op = Lsqb;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        }
+        t->child[j] = $2; 
+        $$ = t;
+        }
     ;
 
 immutable:
-    LPAREN expression RPAREN {}
+    LPAREN expression RPAREN {$$ = $2;}
     | call {$$ = $1;}
     | constant {$$ = $1;}
     ;
 
 call:
-    ID LPAREN args RPAREN {;}
+    ID LPAREN args RPAREN {
+        TreeNode* t = newExpNode(IdK);
+        t->lineno = $1.lineNumber;
+        t->attr.name = $1.string;
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        }
+
+        t->child[j] = $3;
+        $$ = t;
+        }
     ;
 
 args:
@@ -577,7 +834,19 @@ args:
     ;
 
 argList: 
-    argList COMMA expression
+    argList COMMA expression  {
+        TreeNode* t = $1;
+        if (t != NULL) {
+            while(t->sibling != NULL)
+                t = t->sibling;
+
+            t->sibling = $3;
+            $$ = $1;
+        }
+        else {
+            $$ = $3;
+        }
+    }
     | expression {$$ = $1;}
     ;
 
