@@ -273,8 +273,7 @@ record			{
 							yylval.token = *newRECtoken(line_num, yytext);
 							return RECTYPE;
 						}
-						else
-						{
+						else {
 							i = i->next;
 						}
 					}

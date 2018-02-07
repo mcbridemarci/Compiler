@@ -178,7 +178,6 @@ typedef struct TreeNode {
 		OpKind op;
 		int value;
 		unsigned char cvalue;
-		char* string;	//for IDs? - dont think its needed - TA 
 		char* name;
 	} attr;
 

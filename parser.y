@@ -24,6 +24,7 @@ extern int yydebug;
 static TreeNode* syntaxTree;
 
 int varType = VoidT; //TODO: how to deal with types, is this correct?
+int j = 0;
 
 //Reference parser error function
 void yyerror(const char* s);
@@ -93,19 +94,32 @@ declaration:
 recDeclaration:
     RECORD RECTYPE LCB localDeclarations RCB {
         TreeNode* t = newDeclNode(RecK); 
-        TreeNode* i = t; // point to t 
-        //set flag
-        // record was only declared. Nothing to store in rectype. write to attr.name 
-        t->recType = $2.string; // copy the name - TA " the hell is this ?!" dup strings 
-        // set things that are in the union. 
-        // set line number $1.lineno  
-        // child assign if kid != NULL  - loop and check for the next empty child slot 
+        t->isRecord = 1;
+        t->attr.name = strdup($2.string);  
+        t->lineno = $2.lineNumber;
+  
+        j = 0;    
+        while (t->child[j] != NULL) {
+            j++;
+        } 
+        t->child[j] = $4;
         $$ = t;
     }
     ;
 
 varDeclaration:
-    typeSpecifier varDeclList SCOLON
+    typeSpecifier varDeclList SCOLON {
+        TreeNode* t = $2; 
+        t->kind.decl = VarK;
+        t->expType = $1;
+ 
+        while (t->sibling != NULL) {
+            t = t->sibling;
+            t->kind.decl = VarK;
+            t->expType = $1;
+        } 
+        $$ = $2;
+    }
     ;
 
 scopedVarDeclaration:
@@ -125,7 +139,7 @@ varDeclInitialize:
 varDeclId:
     ID {
         //TODO pass line number from here. 
-        printf("var dec id %s\n", $1);
+        //printf("var dec id %s\n", $1);
         TreeNode* t = newDeclNode(VarK);
         t->attr.string = $1.string;
         t->expType = varType;

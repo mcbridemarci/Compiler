@@ -26,7 +26,7 @@ SRCS := $(BASE).y $(BASE).l $(CFILES) $(HFILES)
 OBJS := lex.yy.o $(BASE).tab.o $(OFILES)
 
 #Uncomment for gcc debugging
-#CFLAGS = -g
+CFLAGS = -g
 
 #Declare compiler libraries to use
 LIBS = -lfl
@@ -35,7 +35,7 @@ LIBS = -lfl
 BFLAGS = -v -t -d
 
 #Uncomment for flex debugging
-#FFLAGS = -d
+FFLAGS = -d
 
 
 
