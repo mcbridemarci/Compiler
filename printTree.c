@@ -13,8 +13,8 @@ extern int line_num;
 * Track indentation level for AST printing?
 */
 static int format = 0;
-#define TAB format=2
-#define UNTAB format-=2
+#define TAB format +=2
+#define UNTAB format -=2
 
 static void spacing(void)
 {
@@ -165,7 +165,7 @@ TreeNode* newDeclNode(DeclKind kind) {
 /*
  * Print a token
  */ 
-void printOp(TokenClass token) {
+void printOp(OpKind token) {
     
     switch (token) {
         case Plus: 
@@ -219,7 +219,7 @@ void printOp(TokenClass token) {
         case Colon:
             printf("Op: : "); break;
         default: /* should never happen */
-            printf("Unknown token %d\n", token);
+            printf("Unknown token %d\n", int(token));
     }
 }
 
