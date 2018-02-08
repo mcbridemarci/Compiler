@@ -13,14 +13,14 @@ extern int line_num;
 * Track indentation level for AST printing?
 */
 static int format = 0;
-#define TAB format +=2
+#define TAB format =2
 #define UNTAB format -=2
 
 static void spacing(void)
 {
   int i;
   for (i=0; i<format; i++)
-    printf("!\t");
+    printf("!   ");
 }
 
 //Reference parser error function
@@ -223,15 +223,36 @@ void printOp(OpKind token) {
     }
 }
 
+char* resolveExp(int expType) {
+	char* text = "";
+ 	switch (expType) {
+		case NumT:
+			text = "int";
+			return text;
+		case BoolT:
+			text = "bool";
+			return text;
+		case VoidT:
+			text = "void";
+			return text;
+		case CharT:
+			text = "char";
+			return text;
+		default:
+			printf("Unknown ExpType\n");
+	}
+
+}
+
 /*
 * Print the AST
 */
 void printTree(TreeNode* tree) {
- 
+    TAB;
+    char* type;
 	//Check if we exist before printing
 	while (tree != NULL)
 	{
-    TAB;
     spacing();
 		//Statement node printing
 		if (tree->nodekind == StmtK)
@@ -285,10 +306,23 @@ void printTree(TreeNode* tree) {
 			switch (tree->kind.decl)
 			{
         case VarK:
-          printf("Var %s of type %s [line: %d]\n", tree->attr.name, tree->expType, tree->lineno);
+	  type = resolveExp(tree->expType);
+	  printf("%s %s%s of type %s [line: %d]\n",
+	  	tree->isParam ? "Param" : "Var", 
+		tree->attr.name, 
+		tree->isArray ? " is array" : "",
+		type, tree->lineno
+	  );
           break;
         case FuncK:
-          printf("Func %s returns type %s [line: %d]\n", tree->attr.name, tree->expType, tree->lineno);
+	  type = resolveExp(tree->expType);
+	  printf("%s %s%s %stype %s [line: %d]\n",
+	  	tree->isParam ? "Param" : "Func", 
+		tree->attr.name, 
+	  	tree->isParam ? " of" : " returns", 
+		tree->isArray ? " is array" : "",
+		type, tree->lineno
+	  );
           break;
         case RecK:
           printf("Return [line: %d]\n", tree->lineno);

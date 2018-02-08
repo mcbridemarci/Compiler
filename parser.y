@@ -23,7 +23,6 @@ extern int yydebug;
 //Main AST to parse into
 static TreeNode* syntaxTree;
 
-int varType = VoidT; //TODO: how to deal with types, is this correct?
 int j = 0;
 
 //Reference parser error function
@@ -109,17 +108,17 @@ recDeclaration:
 
 varDeclaration:
     typeSpecifier varDeclList SCOLON {
-        TreeNode* t = $2; 
-        t->kind.decl = VarK;
+        TreeNode* t = newDeclNode(VarK); 
+	TreeNode* i = t;
         t->expType = $1->expType;
-        free($1);
+	i->sibling = $2;
  
-        while (t->sibling != NULL) {
-            t = t->sibling;
-            t->kind.decl = VarK;
-            t->expType = $1->expType;
+        while (i->sibling != NULL) {
+            i = i->sibling;
+            i->kind.decl = VarK;
+            i->expType = $1->expType;
         } 
-        $$ = $2;
+        $$ = i;
     }
     ;
 
@@ -159,13 +158,13 @@ varDeclInitialize:
 
 varDeclId:
     ID {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(VarK);
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         $$ = t;
     }
     | ID LSQB NUMCONST RSQB {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(VarK);
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         t->isArray = 1;
@@ -208,8 +207,9 @@ returnTypeSpecifier:
 funDeclaration:
     typeSpecifier ID LPAREN params RPAREN statement {
         TreeNode* t = newDeclNode(FuncK); 
+	t->attr.name = $2.string;
         t->expType = $1->expType;
-        free($1);
+        t->lineno = $2.lineNumber;
         
         j = 0;    
         while (t->child[j] != NULL) {
@@ -221,6 +221,8 @@ funDeclaration:
     }
     | ID LPAREN params RPAREN statement {
         TreeNode* t = newDeclNode(FuncK); 
+	t->attr.name = $1.string;
+        t->lineno = $1.lineNumber;
         
         j = 0;    
         while (t->child[j] != NULL) {
@@ -255,13 +257,13 @@ paramTypeList:
         TreeNode* t = $2; 
         t->kind.decl = FuncK;
         t->expType = $1->expType;
-        free($1);
  
         while (t->sibling != NULL) {
             t = t->sibling;
             t->kind.decl = FuncK;
             t->expType = $1->expType;
         }
+	$$ = t;
     }
     ;
 
@@ -284,16 +286,18 @@ paramIdList:
 
 paramId:
     ID {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(FuncK);
+	t->isParam = 1;
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         $$ = t; 
     }
     | ID LSQB RSQB {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(FuncK);
+	t->isParam = 1;
+        t->isArray = 1;
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
-        t->isArray = 1;
         $$ = t;
     }
     ;
