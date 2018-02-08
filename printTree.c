@@ -340,12 +340,11 @@ void printTree(TreeNode* tree) {
         int i;
 		for (i = 0; i < MAXCHILDREN; i++)
 		{
-			if(tree->child[i] != NULL)
-			{
+			if(tree->child[i] != NULL){
 				printTree(tree->child[i]);
 			}
-      else
-        tree->child[0] = NULL;
+            else
+                tree->child[0] = NULL;
 		}
 
 		//Point to the next node in the AST
