@@ -110,13 +110,27 @@ varDeclaration:
     typeSpecifier varDeclList SCOLON {
         TreeNode* t = newDeclNode(VarK); 
 	    TreeNode* i = t;
-        t->expType = $1->expType;
+        TreeNode* k = $1;
 	    i->sibling = $2;
+
+        if(k->isRecord) {
+            t->isRecord = 1;
+            t->recType = k->recType;
+        } else {
+            t->expType = k->expType;
+        }
  
         while (i->sibling != NULL) {
             i = i->sibling;
             i->kind.decl = VarK;
-            i->expType = $1->expType;
+
+            if(k->isRecord) {
+                i->isRecord = 1;
+                i->recType = k->recType;
+            } else {
+                i->expType = k->expType;
+            }
+
         } 
         $$ = $2;
     }
@@ -126,6 +140,7 @@ scopedVarDeclaration:
     scopedTypeSpecifier varDeclList SCOLON {
         TreeNode* t = $2;
         TreeNode* i = $1;
+
         if(i->isRecord) {
             t->isRecord = 1;
             t->recType = i->recType;
@@ -134,6 +149,7 @@ scopedVarDeclaration:
         }
         while (t->sibling != NULL) {
             t = t->sibling;
+
             if(i->isRecord) {
                 t->isRecord = 1;
                 t->recType = i->recType;
@@ -149,9 +165,11 @@ scopedVarDeclaration:
 varDeclList:
     varDeclList COMMA varDeclInitialize  {
         TreeNode* t = $1;
+
         if(t != NULL) {
-            while (t->sibling != NULL)
+            while (t->sibling != NULL) {
                 t = t->sibling;
+            }
 
             t->sibling = $3;
             $$ = $1;
@@ -201,7 +219,7 @@ scopedTypeSpecifier:
 
 typeSpecifier:
     returnTypeSpecifier {$$ = $1;}
-    | RECTYPE { 
+    | RECTYPE {
         TreeNode* t = newDeclNode(RecK);
         t->recType = $1.string;
         t->isRecord = 1;
@@ -234,7 +252,9 @@ funDeclaration:
         t->expType = $1->expType;
         t->lineno = $2.lineNumber;
         
-        j = 0;    
+        j = 0;
+
+    
         while (t->child[j] != NULL) {
             j++;
         } 
@@ -279,13 +299,26 @@ paramList:
 paramTypeList:
     typeSpecifier paramIdList {
         TreeNode* t = $2; 
+        TreeNode* k = $1;
         t->kind.decl = FuncK;
-        t->expType = $1->expType;
+
+        if(k->isRecord) {
+            t->isRecord = 1;
+            t->recType = k->recType;
+        } else {
+            t->expType = k->expType;
+        }
  
         while (t->sibling != NULL) {
             t = t->sibling;
             t->kind.decl = FuncK;
-            t->expType = $1->expType;
+
+            if(k->isRecord) {
+                t->isRecord = 1;
+                t->recType = k->recType;
+            } else {
+                t->expType = k->expType;
+            }
         }
     	$$ = $2;
     }
@@ -311,14 +344,14 @@ paramIdList:
 paramId:
     ID {
         TreeNode* t = newDeclNode(FuncK);
-	t->isParam = 1;
+	    t->isParam = 1;
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         $$ = t; 
     }
     | ID LSQB RSQB {
         TreeNode* t = newDeclNode(FuncK);
-	t->isParam = 1;
+	    t->isParam = 1;
         t->isArray = 1;
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
@@ -444,8 +477,9 @@ localDeclarations:
     localDeclarations scopedVarDeclaration {
         TreeNode* t = $1;
         if (t != NULL) {
-            while(t->sibling != NULL)
+            while(t->sibling != NULL) {
                 t = t->sibling;
+            }
 
             t->sibling = $2;
             $$ = $1;
@@ -453,6 +487,9 @@ localDeclarations:
         else {
             $$ = $2;
         }
+
+
+
     } 
     | %empty {$$ = NULL;}
     ;
