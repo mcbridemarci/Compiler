@@ -345,7 +345,7 @@ void printTree(TreeNode* tree, int kid, int sib) {
                             tree->attr.name, 
                             tree->isArray ? " is array" : "",
                             tree->isParam ? "of " : "returns ", 
-                            type,
+                            tree->isRecord ? "record" : type,
                             tree->lineno
                           );
                     break;
