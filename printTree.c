@@ -288,8 +288,15 @@ void printTree(TreeNode* tree) {
           printOp(tree->attr.op);
           printf("[line: %d]\n", tree->lineno);
           break;
-        case ConstK:
-          printf("Const: %d [line: %d]\n", tree->attr.value, tree->lineno);
+        case ConstK: 
+          if (tree->expType == BoolT)
+              printf("Const: %s [line: %d]\n",
+                tree->attr.value ? "true" : "false",
+                tree->lineno
+              );
+          else
+              printf("Const: %d [line: %d]\n", tree->attr.value, tree->lineno);
+
           break;
         case IdK:
           printf("%s: %s [line: %d]\n", 
