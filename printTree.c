@@ -20,7 +20,7 @@ static void spacing(void)
 {
   int i;
   for (i=0; i<format; i++)
-    printf("!\t");
+    printf("!   ");
 }
 
 //Reference parser error function
@@ -227,11 +227,11 @@ void printOp(OpKind token) {
 * Print the AST
 */
 void printTree(TreeNode* tree) {
+    TAB;
  
 	//Check if we exist before printing
 	while (tree != NULL)
 	{
-    TAB;
     spacing();
 		//Statement node printing
 		if (tree->nodekind == StmtK)
