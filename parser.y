@@ -270,7 +270,7 @@ paramList:
             t = t->sibling;
         } 
         t->sibling = $3;
-        $$ = t;
+        $$ = $1;
     }
     | paramTypeList {$$ = $1;}
     ;
