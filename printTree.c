@@ -333,7 +333,7 @@ void printTree(TreeNode* tree, int kid, int sib) {
                     printf("%s %s%s of type %s [line: %d]\n",
                             tree->isParam ? "Param" : "Var", 
                             tree->attr.name, 
-                            tree->isArray9 ? " is array" : "",
+                            tree->isArray ? " is array" : "",
                             tree->isRecord ? "record" : type,
                             tree->lineno
                           );
