@@ -333,8 +333,9 @@ void printTree(TreeNode* tree, int kid, int sib) {
                     printf("%s %s%s of type %s [line: %d]\n",
                             tree->isParam ? "Param" : "Var", 
                             tree->attr.name, 
-                            tree->isArray ? " is array" : "",
-                            tree->isRecord ? "record" : type, tree->lineno
+                            tree->isArray9 ? " is array" : "",
+                            tree->isRecord ? "record" : type,
+                            tree->lineno
                           );
                     break;
                 case FuncK:
@@ -344,7 +345,8 @@ void printTree(TreeNode* tree, int kid, int sib) {
                             tree->attr.name, 
                             tree->isArray ? " is array" : "",
                             tree->isParam ? "of " : "returns ", 
-                            type, tree->lineno
+                            type,
+                            tree->lineno
                           );
                     break;
                 case RecK:
