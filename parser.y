@@ -253,8 +253,6 @@ funDeclaration:
         t->lineno = $2.lineNumber;
         
         j = 0;
-
-    
         while (t->child[j] != NULL) {
             j++;
         } 
@@ -302,7 +300,7 @@ paramTypeList:
         TreeNode* k = $1;
         t->kind.decl = FuncK;
 
-        if(k->isRecord) {
+        if (k->isRecord) {
             t->isRecord = 1;
             t->recType = k->recType;
         } else {
@@ -313,7 +311,7 @@ paramTypeList:
             t = t->sibling;
             t->kind.decl = FuncK;
 
-            if(k->isRecord) {
+            if (k->isRecord) {
                 t->isRecord = 1;
                 t->recType = k->recType;
             } else {
