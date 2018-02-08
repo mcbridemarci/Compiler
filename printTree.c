@@ -308,7 +308,7 @@ void printTree(TreeNode* tree, int kid, int sib) {
                                 tree->lineno
                               );
                     else
-                        printf("Const: %s [line: %d]\n", tree->attr.value, tree->lineno);
+                        printf("Const: %d [line: %d]\n", tree->attr.value, tree->lineno);
 
                     break;
                 case IdK:

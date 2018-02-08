@@ -998,6 +998,10 @@ int main(int argc, char* argv[]) {
           }
          **/
         myfile = fopen(argv[optind], "r");
+        if (!myfile) {
+            printf("File not found!\n");
+            return -1;
+        }
         yyin = myfile;
     } else { //No file name given
         yyin = stdin;   
