@@ -171,21 +171,21 @@ void printOp(OpKind token) {
         case Plus: 
             printf("Op: + "); break;
         case Inc:
-            printf("Op: ++ "); break;
+            printf("Assign: ++ "); break;
         case Dash:
             printf("Op: - "); break;
         case Dec:
-            printf("Op: -- "); break;
+            printf("Assign: -- "); break;
         case Assign:
             printf("Assign: = "); break; 
         case Addass:
-            printf("Op: += "); break;
+            printf("Assign: += "); break;
         case Subass:
-            printf("Op: -= "); break;
+            printf("Assign: -= "); break;
         case Mulass:
-            printf("Op: *= "); break;
+            printf("Assign: *= "); break;
         case Divass:
-            printf("Op: /= "); break;
+            printf("Assign: /= "); break;
         case Asterisk:
             printf("Op: * "); break;
         case Fslash:
@@ -297,8 +297,18 @@ void printTree(TreeNode* tree, int kid, int sib) {
                                 tree->attr.value ? "true" : "false",
                                 tree->lineno
                               );
+                    else if (tree->expType == NumT)
+                        printf("Const: %d [line: %d]\n",
+                                tree->attr.value,
+                                tree->lineno
+                              );
+                    else if (tree->expType == CharT)
+                        printf("Const: '%c' [line: %d]\n",
+                                tree->attr.value,
+                                tree->lineno
+                              );
                     else
-                        printf("Const: %d [line: %d]\n", tree->attr.value, tree->lineno);
+                        printf("Const: %s [line: %d]\n", tree->attr.value, tree->lineno);
 
                     break;
                 case IdK:
