@@ -23,7 +23,6 @@ extern int yydebug;
 //Main AST to parse into
 static TreeNode* syntaxTree;
 
-int varType = VoidT; //TODO: how to deal with types, is this correct?
 int j = 0;
 
 //Reference parser error function
@@ -109,15 +108,15 @@ recDeclaration:
 
 varDeclaration:
     typeSpecifier varDeclList SCOLON {
-        TreeNode* t = $2; 
-        t->kind.decl = VarK;
+        TreeNode* t = newDeclNode(VarK); 
+	    TreeNode* i = t;
         t->expType = $1->expType;
-        free($1);
+	    i->sibling = $2;
  
-        while (t->sibling != NULL) {
-            t = t->sibling;
-            t->kind.decl = VarK;
-            t->expType = $1->expType;
+        while (i->sibling != NULL) {
+            i = i->sibling;
+            i->kind.decl = VarK;
+            i->expType = $1->expType;
         } 
         $$ = $2;
     }
@@ -125,14 +124,16 @@ varDeclaration:
 
 scopedVarDeclaration:
     scopedTypeSpecifier varDeclList SCOLON {
-        
+        TreeNode* t = $2;
+        t->expType = $1->expType;
+        $$ = t; 
     }
     ;
 
 varDeclList:
     varDeclList COMMA varDeclInitialize  {
         TreeNode* t = $1;
-        if(t != NULL){
+        if(t != NULL) {
             while(t->sibling != NULL)
                 t = t->sibling;
 
@@ -154,18 +155,19 @@ varDeclInitialize:
             j++;
         } 
         $1->child[j] = $3;
+        $$ = $1;
         }
     ;
 
 varDeclId:
     ID {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(VarK);
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         $$ = t;
     }
     | ID LSQB NUMCONST RSQB {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(VarK);
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         t->isArray = 1;
@@ -208,19 +210,27 @@ returnTypeSpecifier:
 funDeclaration:
     typeSpecifier ID LPAREN params RPAREN statement {
         TreeNode* t = newDeclNode(FuncK); 
+	t->attr.name = $2.string;
         t->expType = $1->expType;
-        free($1);
+        t->lineno = $2.lineNumber;
         
         j = 0;    
         while (t->child[j] != NULL) {
             j++;
         } 
         t->child[j] = $4;
-        t->child[++j] = $6;
+	TreeNode* r = $4;
+	while(r){
+		printf("%s\n", $4->attr.name);
+		r = r->sibling;
+	}
+	t->child[++j] = $6;
         $$ = t;
     }
     | ID LPAREN params RPAREN statement {
         TreeNode* t = newDeclNode(FuncK); 
+	t->attr.name = $1.string;
+        t->lineno = $1.lineNumber;
         
         j = 0;    
         while (t->child[j] != NULL) {
@@ -255,13 +265,13 @@ paramTypeList:
         TreeNode* t = $2; 
         t->kind.decl = FuncK;
         t->expType = $1->expType;
-        free($1);
  
         while (t->sibling != NULL) {
             t = t->sibling;
             t->kind.decl = FuncK;
             t->expType = $1->expType;
         }
+	$$ = $2;
     }
     ;
 
@@ -284,16 +294,18 @@ paramIdList:
 
 paramId:
     ID {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(FuncK);
+	t->isParam = 1;
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         $$ = t; 
     }
     | ID LSQB RSQB {
-        TreeNode* t = newExpNode(IdK);
+        TreeNode* t = newDeclNode(FuncK);
+	t->isParam = 1;
+        t->isArray = 1;
         t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
-        t->isArray = 1;
         $$ = t;
     }
     ;
@@ -561,11 +573,11 @@ simpleExpression:
         t->attr.op = Or;
 
         j = 0;    
-        while ($2->child[j] != NULL) {
+        while (t->child[j] != NULL) {
             j++;
         } 
-        $2->child[j] = $1;
-        $2->child[j] = $3;
+        t->child[j] = $1;
+        t->child[j] = $3;
         $$ = t;
         } 
     | andExpression {$$ = $1;}
@@ -578,11 +590,11 @@ andExpression:
         t->attr.op = And;
 
         j = 0;    
-        while ($2->child[j] != NULL) {
+        while (t->child[j] != NULL) {
             j++;
         } 
-        $2->child[j] = $1;
-        $2->child[j] = $3;
+        t->child[j] = $1;
+        t->child[j] = $3;
         $$ = t;
         } 
     | unaryRelExpression {$$ = $1;}
