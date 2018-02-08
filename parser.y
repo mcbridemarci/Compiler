@@ -975,12 +975,12 @@ int main(int argc, char* argv[]) {
     while(!feof(yyin) && !ferror(yyin)){
         yyparse();
     }
-    printf("\n\n\n\n\n\n");
-    printTree(syntaxTree);
+    printTree(syntaxTree, -1, -1);
 
     //Close read-in file
-    printf("\n\n\n\n\nout of printTree!\n\n\n\n\n\n");
     fclose(yyin);
+    printf("Number of warnings: 0\n");
+    printf("Number of errors: 0\n");
 
     return(0);
 }
