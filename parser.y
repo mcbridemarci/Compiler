@@ -266,11 +266,12 @@ paramList:
     paramList SCOLON paramTypeList
     {
         TreeNode* t = $1;
+        TreeNode* i = t;
         while (t->sibling != NULL) {
             t = t->sibling;
         } 
         t->sibling = $3;
-        $$ = $1;
+        $$ = i;
     }
     | paramTypeList {$$ = $1;}
     ;
