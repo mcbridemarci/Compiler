@@ -320,7 +320,7 @@ void printTree(TreeNode* tree) {
 	  	tree->isParam ? "Param" : "Var", 
 		tree->attr.name, 
 		tree->isArray ? " is array" : "",
-		type, tree->lineno
+	    tree->isRecord ? "record" : type, tree->lineno
 	  );
           break;
         case FuncK:
@@ -328,13 +328,13 @@ void printTree(TreeNode* tree) {
 	  printf("%s %s%s %stype %s [line: %d]\n",
 	  	tree->isParam ? "Param" : "Func", 
 		tree->attr.name, 
-	  	tree->isParam ? " of" : " returns", 
 		tree->isArray ? " is array" : "",
+	  	tree->isParam ? "of " : "returns ", 
 		type, tree->lineno
 	  );
           break;
         case RecK:
-          printf("Return [line: %d]\n", tree->lineno);
+          printf("Record %s [line: %d]\n", tree->attr.name, tree->lineno);
           break;
         default: 
           printf("Whoops, unrecognized declaration.\n");

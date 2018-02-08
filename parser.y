@@ -125,13 +125,22 @@ varDeclaration:
 scopedVarDeclaration:
     scopedTypeSpecifier varDeclList SCOLON {
         TreeNode* t = $2;
-        t->expType = $1->expType;
-        
+        TreeNode* i = $1;
+        if(i->isRecord) {
+            t->isRecord = 1;
+            t->recType = i->recType;
+        } else {
+            t->expType = i->expType;
+        }
         while (t->sibling != NULL) {
             t = t->sibling;
-            t->expType = $1->expType;
+            if(i->isRecord) {
+                t->isRecord = 1;
+                t->recType = i->recType;
+            } else {
+                t->expType = i->expType;
+            }
         }
-        
         
         $$ = $2; 
     }
@@ -192,7 +201,11 @@ scopedTypeSpecifier:
 
 typeSpecifier:
     returnTypeSpecifier {$$ = $1;}
-    | RECTYPE { //TODO fill in RECTYPE braces
+    | RECTYPE { 
+        TreeNode* t = newDeclNode(RecK);
+        t->recType = $1.string;
+        t->isRecord = 1;
+        $$ = t;
     }   
     ;
 
@@ -595,7 +608,7 @@ simpleExpression:
             j++;
         } 
         t->child[j] = $1;
-        t->child[j] = $3;
+        t->child[++j] = $3;
         $$ = t;
         } 
     | andExpression {$$ = $1;}
@@ -612,7 +625,7 @@ andExpression:
             j++;
         } 
         t->child[j] = $1;
-        t->child[j] = $3;
+        t->child[++j] = $3;
         $$ = t;
         } 
     | unaryRelExpression {$$ = $1;}
@@ -625,10 +638,10 @@ unaryRelExpression:
         t->attr.op = Not;
 
         j = 0;    
-        while ($2->child[j] != NULL) {
+        while (t->child[j] != NULL) {
             j++;
         } 
-        $2->child[j] = $2;
+        t->child[j] = $2;
         $$ = t;
         } 
     | relExpression {$$ = $1;}
@@ -752,11 +765,11 @@ mulop:
 unaryExpression:
     unaryop unaryExpression {
         j = 0;    
-        while ($2->child[j] != NULL) {
+        while ($1->child[j] != NULL) {
             j++;
         } 
-        $2->child[j] = $2;
-        $$ = $2;
+        $1->child[j] = $2;
+        $$ = $1;
     }
     | factor {$$ = $1;}
     ;
@@ -962,7 +975,7 @@ int main(int argc, char* argv[]) {
     while(!feof(yyin) && !ferror(yyin)){
         yyparse();
     }
-    printf("\n\n\n\n\nout of yyparse!\n\n\n\n\n\n");
+    printf("\n\n\n\n\n\n");
     printTree(syntaxTree);
 
     //Close read-in file
