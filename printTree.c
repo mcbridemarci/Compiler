@@ -13,10 +13,10 @@ extern int line_num;
 * Track indentation level for AST printing?
 */
 static int format = 0;
-#define TAB format =2
-#define UNTAB format -=2
+#define TAB format +=1
+#define UNTAB format -=1
 
-static void spacing(void)
+static void spacing(format)
 {
   int i;
   for (i=0; i<format; i++)
@@ -248,12 +248,11 @@ char* resolveExp(int expType) {
 * Print the AST
 */
 void printTree(TreeNode* tree) {
-    TAB;
     char* type;
 	//Check if we exist before printing
 	while (tree != NULL)
 	{
-    spacing();
+    spacing(format);
 		//Statement node printing
 		if (tree->nodekind == StmtK)
 		{
@@ -351,7 +350,9 @@ void printTree(TreeNode* tree) {
 		for (i = 0; i < MAXCHILDREN; i++)
 		{
 			if(tree->child[i] != NULL){
+				TAB;
 				printTree(tree->child[i]);
+				UNTAB;
 			}
             else
                 tree->child[0] = NULL;
@@ -361,7 +362,5 @@ void printTree(TreeNode* tree) {
 		tree = tree->sibling;
 	}
 	//END WHILE
-  UNTAB;
-
 	return;
 }
