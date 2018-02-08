@@ -109,29 +109,31 @@ recDeclaration:
 varDeclaration:
     typeSpecifier varDeclList SCOLON {
         TreeNode* t = newDeclNode(VarK); 
-	TreeNode* i = t;
+	    TreeNode* i = t;
         t->expType = $1->expType;
-	i->sibling = $2;
+	    i->sibling = $2;
  
         while (i->sibling != NULL) {
             i = i->sibling;
             i->kind.decl = VarK;
             i->expType = $1->expType;
         } 
-        $$ = i;
+        $$ = $2;
     }
     ;
 
 scopedVarDeclaration:
     scopedTypeSpecifier varDeclList SCOLON {
-        
+        TreeNode* t = $2;
+        t->expType = $1->expType;
+        $$ = t; 
     }
     ;
 
 varDeclList:
     varDeclList COMMA varDeclInitialize  {
         TreeNode* t = $1;
-        if(t != NULL){
+        if(t != NULL) {
             while(t->sibling != NULL)
                 t = t->sibling;
 
@@ -153,6 +155,7 @@ varDeclInitialize:
             j++;
         } 
         $1->child[j] = $3;
+        $$ = $1;
         }
     ;
 
@@ -216,7 +219,12 @@ funDeclaration:
             j++;
         } 
         t->child[j] = $4;
-        t->child[++j] = $6;
+	TreeNode* r = $4;
+	while(r){
+		printf("%s\n", $4->attr.name);
+		r = r->sibling;
+	}
+	t->child[++j] = $6;
         $$ = t;
     }
     | ID LPAREN params RPAREN statement {
@@ -263,7 +271,7 @@ paramTypeList:
             t->kind.decl = FuncK;
             t->expType = $1->expType;
         }
-	$$ = t;
+	$$ = $2;
     }
     ;
 

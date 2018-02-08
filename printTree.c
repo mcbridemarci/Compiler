@@ -177,7 +177,7 @@ void printOp(OpKind token) {
         case Dec:
             printf("Op: -- "); break;
         case Assign:
-            printf("Assign: = "); 
+            printf("Assign: = "); break; 
         case Addass:
             printf("Op: += "); break;
         case Subass:
