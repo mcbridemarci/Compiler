@@ -211,7 +211,7 @@ void printOp(OpKind token) {
         case Random:
             printf("Op: ? "); break;
         case Mod:
-            printf("Op: % "); break;
+            printf("Op: %% "); break;
         case Lsqb:
             printf("Op: [ "); break;
         case Period:
@@ -292,7 +292,10 @@ void printTree(TreeNode* tree) {
           printf("Const: %d [line: %d]\n", tree->attr.value, tree->lineno);
           break;
         case IdK:
-          printf("Id: %s [line: %d]\n", tree->attr.name, tree->lineno);
+          printf("%s: %s [line: %d]\n", 
+              tree->isFunc ? "Call" : "Id",
+              tree->attr.name, tree->lineno
+          );
           break;
         default: 
           printf("Whoops, unrecognized expression.\n");

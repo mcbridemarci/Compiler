@@ -126,7 +126,14 @@ scopedVarDeclaration:
     scopedTypeSpecifier varDeclList SCOLON {
         TreeNode* t = $2;
         t->expType = $1->expType;
-        $$ = t; 
+        
+        while (t->sibling != NULL) {
+            t = t->sibling;
+            t->expType = $1->expType;
+        }
+        
+        
+        $$ = $2; 
     }
     ;
 
@@ -134,7 +141,7 @@ varDeclList:
     varDeclList COMMA varDeclInitialize  {
         TreeNode* t = $1;
         if(t != NULL) {
-            while(t->sibling != NULL)
+            while (t->sibling != NULL)
                 t = t->sibling;
 
             t->sibling = $3;
@@ -221,7 +228,6 @@ funDeclaration:
         t->child[j] = $4;
 	TreeNode* r = $4;
 	while(r){
-		printf("%s\n", $4->attr.name);
 		r = r->sibling;
 	}
 	t->child[++j] = $6;
@@ -425,7 +431,19 @@ compoundStmt:
     ;
 
 localDeclarations:
-    localDeclarations scopedVarDeclaration {$$ = $2;} 
+    localDeclarations scopedVarDeclaration {
+        TreeNode* t = $1;
+        if (t != NULL) {
+            while(t->sibling != NULL)
+                t = t->sibling;
+
+            t->sibling = $2;
+            $$ = $1;
+        }
+        else {
+            $$ = $2;
+        }
+    } 
     | %empty {$$ = NULL;}
     ;
 
@@ -830,6 +848,7 @@ call:
         TreeNode* t = newExpNode(IdK);
         t->lineno = $1.lineNumber;
         t->attr.name = $1.string;
+        t->isFunc = 1;
         j = 0;    
         while (t->child[j] != NULL) {
             j++;
