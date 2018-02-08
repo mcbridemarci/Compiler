@@ -230,7 +230,7 @@ returnTypeSpecifier:
 funDeclaration:
     typeSpecifier ID LPAREN params RPAREN statement {
         TreeNode* t = newDeclNode(FuncK); 
-	t->attr.name = $2.string;
+	    t->attr.name = $2.string;
         t->expType = $1->expType;
         t->lineno = $2.lineNumber;
         
@@ -239,16 +239,12 @@ funDeclaration:
             j++;
         } 
         t->child[j] = $4;
-	TreeNode* r = $4;
-	while(r){
-		r = r->sibling;
-	}
-	t->child[++j] = $6;
+	    t->child[++j] = $6;
         $$ = t;
     }
     | ID LPAREN params RPAREN statement {
         TreeNode* t = newDeclNode(FuncK); 
-	t->attr.name = $1.string;
+	    t->attr.name = $1.string;
         t->lineno = $1.lineNumber;
         
         j = 0;    
@@ -290,7 +286,7 @@ paramTypeList:
             t->kind.decl = FuncK;
             t->expType = $1->expType;
         }
-	$$ = $2;
+    	$$ = $2;
     }
     ;
 
