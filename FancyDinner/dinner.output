@@ -1,0 +1,515 @@
+Grammar
+
+    0 $accept: dinner $end
+
+    1 dinner: header template specials body_section chemistry footer
+
+    2 header: DINNER FLOAT ENDLS
+
+    3 template: typelines
+
+    4 typelines: typelines typeline
+    5          | typeline
+
+    6 typeline: TYPE STRING ENDLS
+
+    7 specials: SPECIALS ENDLS
+
+    8 body_section: body_lines
+
+    9 body_lines: body_lines body_line
+   10           | body_line
+
+   11 body_line: INT INT INT INT STRING allergens ENDLS
+
+   12 chemistry: CHEMICALS ENDL kemikals
+
+   13 kemikals: kemikals kemikal
+   14         | kemikal
+
+   15 kemikal: chems ENDLS
+
+   16 chems: chems chem
+   17      | chem
+
+   18 chem: CHEMICAL
+
+   19 footer: END ENDLS
+   20       | END
+
+   21 ENDLS: ENDLS ENDL
+   22      | ENDL
+
+   23 allergens: allergens allergy
+   24          | allergy
+
+   25 allergy: ALLERGEN
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+INT (258) 11
+FLOAT (259) 2
+STRING (260) 6 11
+ALLERGEN (261) 25
+CHEMICAL (262) 18
+DINNER (263) 2
+TYPE (264) 6
+END (265) 19 20
+ENDL (266) 12 21 22
+SPECIALS (267) 7
+CHEMICALS (268) 12
+
+
+Nonterminals, with rules where they appear
+
+$accept (14)
+    on left: 0
+dinner (15)
+    on left: 1, on right: 0
+header (16)
+    on left: 2, on right: 1
+template (17)
+    on left: 3, on right: 1
+typelines (18)
+    on left: 4 5, on right: 3 4
+typeline (19)
+    on left: 6, on right: 4 5
+specials (20)
+    on left: 7, on right: 1
+body_section (21)
+    on left: 8, on right: 1
+body_lines (22)
+    on left: 9 10, on right: 8 9
+body_line (23)
+    on left: 11, on right: 9 10
+chemistry (24)
+    on left: 12, on right: 1
+kemikals (25)
+    on left: 13 14, on right: 12 13
+kemikal (26)
+    on left: 15, on right: 13 14
+chems (27)
+    on left: 16 17, on right: 15 16
+chem (28)
+    on left: 18, on right: 16 17
+footer (29)
+    on left: 19 20, on right: 1
+ENDLS (30)
+    on left: 21 22, on right: 2 6 7 11 15 19 21
+allergens (31)
+    on left: 23 24, on right: 11 23
+allergy (32)
+    on left: 25, on right: 23 24
+
+
+State 0
+
+    0 $accept: . dinner $end
+
+    DINNER  shift, and go to state 1
+
+    dinner  go to state 2
+    header  go to state 3
+
+
+State 1
+
+    2 header: DINNER . FLOAT ENDLS
+
+    FLOAT  shift, and go to state 4
+
+
+State 2
+
+    0 $accept: dinner . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 dinner: header . template specials body_section chemistry footer
+
+    TYPE  shift, and go to state 6
+
+    template   go to state 7
+    typelines  go to state 8
+    typeline   go to state 9
+
+
+State 4
+
+    2 header: DINNER FLOAT . ENDLS
+
+    ENDL  shift, and go to state 10
+
+    ENDLS  go to state 11
+
+
+State 5
+
+    0 $accept: dinner $end .
+
+    $default  accept
+
+
+State 6
+
+    6 typeline: TYPE . STRING ENDLS
+
+    STRING  shift, and go to state 12
+
+
+State 7
+
+    1 dinner: header template . specials body_section chemistry footer
+
+    SPECIALS  shift, and go to state 13
+
+    specials  go to state 14
+
+
+State 8
+
+    3 template: typelines .
+    4 typelines: typelines . typeline
+
+    TYPE  shift, and go to state 6
+
+    $default  reduce using rule 3 (template)
+
+    typeline  go to state 15
+
+
+State 9
+
+    5 typelines: typeline .
+
+    $default  reduce using rule 5 (typelines)
+
+
+State 10
+
+   22 ENDLS: ENDL .
+
+    $default  reduce using rule 22 (ENDLS)
+
+
+State 11
+
+    2 header: DINNER FLOAT ENDLS .
+   21 ENDLS: ENDLS . ENDL
+
+    ENDL  shift, and go to state 16
+
+    $default  reduce using rule 2 (header)
+
+
+State 12
+
+    6 typeline: TYPE STRING . ENDLS
+
+    ENDL  shift, and go to state 10
+
+    ENDLS  go to state 17
+
+
+State 13
+
+    7 specials: SPECIALS . ENDLS
+
+    ENDL  shift, and go to state 10
+
+    ENDLS  go to state 18
+
+
+State 14
+
+    1 dinner: header template specials . body_section chemistry footer
+
+    INT  shift, and go to state 19
+
+    body_section  go to state 20
+    body_lines    go to state 21
+    body_line     go to state 22
+
+
+State 15
+
+    4 typelines: typelines typeline .
+
+    $default  reduce using rule 4 (typelines)
+
+
+State 16
+
+   21 ENDLS: ENDLS ENDL .
+
+    $default  reduce using rule 21 (ENDLS)
+
+
+State 17
+
+    6 typeline: TYPE STRING ENDLS .
+   21 ENDLS: ENDLS . ENDL
+
+    ENDL  shift, and go to state 16
+
+    $default  reduce using rule 6 (typeline)
+
+
+State 18
+
+    7 specials: SPECIALS ENDLS .
+   21 ENDLS: ENDLS . ENDL
+
+    ENDL  shift, and go to state 16
+
+    $default  reduce using rule 7 (specials)
+
+
+State 19
+
+   11 body_line: INT . INT INT INT STRING allergens ENDLS
+
+    INT  shift, and go to state 23
+
+
+State 20
+
+    1 dinner: header template specials body_section . chemistry footer
+
+    CHEMICALS  shift, and go to state 24
+
+    chemistry  go to state 25
+
+
+State 21
+
+    8 body_section: body_lines .
+    9 body_lines: body_lines . body_line
+
+    INT  shift, and go to state 19
+
+    $default  reduce using rule 8 (body_section)
+
+    body_line  go to state 26
+
+
+State 22
+
+   10 body_lines: body_line .
+
+    $default  reduce using rule 10 (body_lines)
+
+
+State 23
+
+   11 body_line: INT INT . INT INT STRING allergens ENDLS
+
+    INT  shift, and go to state 27
+
+
+State 24
+
+   12 chemistry: CHEMICALS . ENDL kemikals
+
+    ENDL  shift, and go to state 28
+
+
+State 25
+
+    1 dinner: header template specials body_section chemistry . footer
+
+    END  shift, and go to state 29
+
+    footer  go to state 30
+
+
+State 26
+
+    9 body_lines: body_lines body_line .
+
+    $default  reduce using rule 9 (body_lines)
+
+
+State 27
+
+   11 body_line: INT INT INT . INT STRING allergens ENDLS
+
+    INT  shift, and go to state 31
+
+
+State 28
+
+   12 chemistry: CHEMICALS ENDL . kemikals
+
+    CHEMICAL  shift, and go to state 32
+
+    kemikals  go to state 33
+    kemikal   go to state 34
+    chems     go to state 35
+    chem      go to state 36
+
+
+State 29
+
+   19 footer: END . ENDLS
+   20       | END .
+
+    ENDL  shift, and go to state 10
+
+    $default  reduce using rule 20 (footer)
+
+    ENDLS  go to state 37
+
+
+State 30
+
+    1 dinner: header template specials body_section chemistry footer .
+
+    $default  reduce using rule 1 (dinner)
+
+
+State 31
+
+   11 body_line: INT INT INT INT . STRING allergens ENDLS
+
+    STRING  shift, and go to state 38
+
+
+State 32
+
+   18 chem: CHEMICAL .
+
+    $default  reduce using rule 18 (chem)
+
+
+State 33
+
+   12 chemistry: CHEMICALS ENDL kemikals .
+   13 kemikals: kemikals . kemikal
+
+    CHEMICAL  shift, and go to state 32
+
+    $default  reduce using rule 12 (chemistry)
+
+    kemikal  go to state 39
+    chems    go to state 35
+    chem     go to state 36
+
+
+State 34
+
+   14 kemikals: kemikal .
+
+    $default  reduce using rule 14 (kemikals)
+
+
+State 35
+
+   15 kemikal: chems . ENDLS
+   16 chems: chems . chem
+
+    CHEMICAL  shift, and go to state 32
+    ENDL      shift, and go to state 10
+
+    chem   go to state 40
+    ENDLS  go to state 41
+
+
+State 36
+
+   17 chems: chem .
+
+    $default  reduce using rule 17 (chems)
+
+
+State 37
+
+   19 footer: END ENDLS .
+   21 ENDLS: ENDLS . ENDL
+
+    ENDL  shift, and go to state 16
+
+    $default  reduce using rule 19 (footer)
+
+
+State 38
+
+   11 body_line: INT INT INT INT STRING . allergens ENDLS
+
+    ALLERGEN  shift, and go to state 42
+
+    allergens  go to state 43
+    allergy    go to state 44
+
+
+State 39
+
+   13 kemikals: kemikals kemikal .
+
+    $default  reduce using rule 13 (kemikals)
+
+
+State 40
+
+   16 chems: chems chem .
+
+    $default  reduce using rule 16 (chems)
+
+
+State 41
+
+   15 kemikal: chems ENDLS .
+   21 ENDLS: ENDLS . ENDL
+
+    ENDL  shift, and go to state 16
+
+    $default  reduce using rule 15 (kemikal)
+
+
+State 42
+
+   25 allergy: ALLERGEN .
+
+    $default  reduce using rule 25 (allergy)
+
+
+State 43
+
+   11 body_line: INT INT INT INT STRING allergens . ENDLS
+   23 allergens: allergens . allergy
+
+    ALLERGEN  shift, and go to state 42
+    ENDL      shift, and go to state 10
+
+    ENDLS    go to state 45
+    allergy  go to state 46
+
+
+State 44
+
+   24 allergens: allergy .
+
+    $default  reduce using rule 24 (allergens)
+
+
+State 45
+
+   11 body_line: INT INT INT INT STRING allergens ENDLS .
+   21 ENDLS: ENDLS . ENDL
+
+    ENDL  shift, and go to state 16
+
+    $default  reduce using rule 11 (body_line)
+
+
+State 46
+
+   23 allergens: allergens allergy .
+
+    $default  reduce using rule 23 (allergens)
